@@ -18,8 +18,15 @@ export function AuthProvider({ children }) {
     setUsuario(null);
   };
 
+  // Nueva función para actualizar datos del usuario en el contexto
+  const actualizarUsuario = (nuevosDatos) => {
+    const actualizado = { ...usuario, ...nuevosDatos };
+    localStorage.setItem('usuario', JSON.stringify(actualizado));
+    setUsuario(actualizado);
+  };
+
   return (
-    <AuthContext.Provider value={{ usuario, login, logout, estaAutenticado: !!usuario }}>
+    <AuthContext.Provider value={{ usuario, login, logout, actualizarUsuario, estaAutenticado: !!usuario }}>
       {children}
     </AuthContext.Provider>
   );
