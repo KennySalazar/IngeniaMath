@@ -48,7 +48,7 @@ export default function LoginPage() {
           </h2>
           <p className="login-visual__sub">
             Plataforma adaptativa para aspirantes a<br />
-            Ingeniería USAC · 7 módulos · Rutas personalizadas
+            La Carrera de Ingeniería en la USAC 
           </p>
           <div className="login-stats">
             <div className="login-stat">
@@ -77,7 +77,7 @@ export default function LoginPage() {
       <div className="login-form-panel">
         <div className="login-form-box">
           <div className="login-form-header">
-            <h1 className="login-form-title">Bienvenido de vuelta</h1>
+            <h1 className="login-form-title">Bienvenido</h1>
             <p className="login-form-subtitle">Ingresa a tu cuenta para continuar</p>
           </div>
 
@@ -92,7 +92,7 @@ export default function LoginPage() {
             <div className="field">
               <label className="field__label" htmlFor="correo">Correo electrónico</label>
               <div className="field__wrapper">
-                <span className="field__icon">✉</span>
+                <span className="field__icon"></span>
                 <input
                   id="correo"
                   type="email"
@@ -109,7 +109,7 @@ export default function LoginPage() {
             <div className="field">
               <label className="field__label" htmlFor="password">Contraseña</label>
               <div className="field__wrapper">
-                <span className="field__icon">🔒</span>
+                <span className="field__icon"></span>
                 <input
                   id="password"
                   type={showPass ? 'text' : 'password'}
@@ -126,14 +126,13 @@ export default function LoginPage() {
                   onClick={() => setShowPass(!showPass)}
                   tabIndex={-1}
                 >
-                  {showPass ? '🙈' : '👁'}
+                  {showPass ? '' : '👁'}
                 </button>
               </div>
             </div>
 
             <div className="login-forgot">
-              <a href="#" className="login-forgot__link">¿Olvidaste tu contraseña?</a>
-            </div>
+              <a href="/olvide-password" className="login-forgot__link">¿Olvidaste tu contraseña?</a>            </div>
 
             <button type="submit" className="login-btn" disabled={loading}>
               {loading ? (

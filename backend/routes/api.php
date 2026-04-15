@@ -1,33 +1,45 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UsuarioController;
+use App\Http\Controllers\Api\PasswordRecuperacionController;
 use Illuminate\Support\Facades\Route;
 
-// ── Ping ────────────────────────────────────────────────────────────────
+// Ping
 Route::get('/ping', fn() => response()->json([
-    'status'  => 'ok',
+    'status' => 'ok',
     'sistema' => 'IngeniaMath API',
-    'version' => '1.0',
+    'version' => '1.0'
 ]));
 
-// ── Autenticación pública ────────────────────────────────────────────────
+// ── Rutas PÚBLICAS (sin token) ───────────────────────────────────────────
 Route::prefix('auth')->group(function () {
     Route::post('/login',    [AuthController::class, 'login']);
     Route::post('/registro', [AuthController::class, 'registro']);
 });
 
-// ── Rutas protegidas (requieren token Sanctum) ───────────────────────────
+// Recuperación de contraseña — también pública
+Route::prefix('password')->group(function () {
+    Route::post('/solicitar',    [PasswordRecuperacionController::class, 'solicitar']);
+    Route::get('/validar-token', [PasswordRecuperacionController::class, 'validarToken']);
+    Route::post('/restablecer',  [PasswordRecuperacionController::class, 'restablecer']);
+});
+
+// ── Rutas PROTEGIDAS (requieren token) ──────────────────────────────────
 Route::middleware('auth:sanctum')->group(function () {
+
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/auth/me',      [AuthController::class, 'me']);
 
-    // Ejemplo de ruta solo para ADMIN:
-    // Route::middleware('rol:ADMIN')->group(function () {
-    //     Route::get('/admin/usuarios', [UsuarioController::class, 'index']);
-    // });
+    Route::get('/usuarios/{id}', [UsuarioController::class, 'show']);
+    Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
 
-    // Ejemplo de ruta para TUTOR y ADMIN:
-    // Route::middleware('rol:TUTOR,ADMIN')->group(function () {
-    //     Route::post('/ejercicios', [EjercicioController::class, 'store']);
-    // });
+    Route::middleware('rol:ADMIN')->group(function () {
+        Route::get('/usuarios',               [UsuarioController::class, 'index']);
+        Route::post('/usuarios',              [UsuarioController::class, 'store']);
+        Route::patch('/usuarios/{id}/estado', [UsuarioController::class, 'cambiarEstado']);
+        Route::patch('/usuarios/{id}/rol',    [UsuarioController::class, 'cambiarRol']);
+        Route::delete('/usuarios/{id}',       [UsuarioController::class, 'destroy']);
+        Route::get('/usuarios-resumen',       [UsuarioController::class, 'resumen']);
+    });
 });
