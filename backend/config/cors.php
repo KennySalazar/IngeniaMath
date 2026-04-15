@@ -9,7 +9,7 @@ return [
     'allowed_origins' => [
         'http://localhost:5173',   // React en Vite (desarrollo)
         'http://localhost:3000',   // React alternativo
-        'http://127.0.0.1:5173',
+        'http://192.168.0.8:5173',
     ],
 
     'allowed_origins_patterns' => [],

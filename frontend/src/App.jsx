@@ -5,6 +5,8 @@ import LoginPage from './pages/auth/LoginPage';
 import UsuariosPage from './pages/admin/UsuariosPage';
 import OlvidePasswordPage      from './pages/auth/OlvidePasswordPage';
 import RestablecerPasswordPage from './pages/auth/RestablecerPasswordPage';
+import RegistroPage from './pages/auth/RegistroPage';
+
 
 function NavbarSimple({ titulo, children }) {
   const { logout, usuario } = useAuth();
@@ -133,6 +135,7 @@ export default function App() {
       <Route path="/no-autorizado" element={<NoAutorizado />} />
       <Route path="/olvide-password"    element={<OlvidePasswordPage />} />
       <Route path="/recuperar-password" element={<RestablecerPasswordPage />} />
+      <Route path="/registro" element={<RegistroPage />} />
 
       <Route path="/dashboard" element={
         <ProtectedRoute><RedireccionPorRol /></ProtectedRoute>

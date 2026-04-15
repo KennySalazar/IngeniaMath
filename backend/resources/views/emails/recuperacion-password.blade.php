@@ -110,12 +110,12 @@
             <h2>Hola, {{ $nombres }}</h2>
             <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta en IngeniaMath. Haz clic en el botón para crear una nueva contraseña:</p>
 
-            <a href="http://localhost:5173/recuperar-password?token={{ $token }}" class="btn">
+            <a href="http://192.168.0.8:5173/recuperar-password?token={{ $token }}" class="btn">
                 Restablecer mi contraseña
             </a>
 
             <p style="text-align:center; color: #aaa; font-size: 12px; margin-bottom: 4px;">O copia este enlace en tu navegador:</p>
-            <div class="token-box">http://localhost:5173/recuperar-password?token={{ $token }}</div>
+            <div class="token-box">http://192.168.0.8:5173/recuperar-password?token={{ $token }}</div>
 
             <div class="warning">
                 <strong>Este enlace expira en 60 minutos.</strong> Si no solicitaste este cambio, ignora este mensaje. Tu contraseña no será modificada.
