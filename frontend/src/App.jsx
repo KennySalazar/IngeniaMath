@@ -10,6 +10,8 @@ import PerfilPage from './pages/perfil/PerfilPage';
 import EjerciciosPage     from './pages/tutor/EjerciciosPage';
 import CrearEjercicioPage from './pages/tutor/CrearEjercicioPage';
 import DetalleEjercicioPage from './pages/tutor/DetalleEjercicioPage';
+import RevisionPage from './pages/revisor/RevisionPage';
+
 
 
 function NavbarSimple({ titulo, children }) {
@@ -190,10 +192,11 @@ const DashboardTutor = () => (
 );
 
 const DashboardRevisor = () => (
-  <NavbarSimple titulo="Dashboard Revisor">
-    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14 }}>Módulo en construcción...</p>
+  <NavbarSimple titulo="Panel de revisión">
+    <RevisionPage />
   </NavbarSimple>
 );
+
 
 const NoAutorizado = () => (
   <NavbarSimple titulo="403 — No autorizado">
@@ -310,6 +313,13 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/revisor/revision" element={
+      <ProtectedRoute roles={['REVISOR', 'ADMIN']}>
+        <NavbarSimple titulo="Panel de revisión">
+          <RevisionPage />
+        </NavbarSimple>
+      </ProtectedRoute>
+    }/>
     </Routes>
   );
 }
