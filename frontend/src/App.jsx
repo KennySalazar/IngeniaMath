@@ -7,6 +7,10 @@ import OlvidePasswordPage from './pages/auth/OlvidePasswordPage';
 import RestablecerPasswordPage from './pages/auth/RestablecerPasswordPage';
 import RegistroPage from './pages/auth/RegistroPage';
 import PerfilPage from './pages/perfil/PerfilPage';
+import EjerciciosPage     from './pages/tutor/EjerciciosPage';
+import CrearEjercicioPage from './pages/tutor/CrearEjercicioPage';
+import DetalleEjercicioPage from './pages/tutor/DetalleEjercicioPage';
+
 
 function NavbarSimple({ titulo, children }) {
   const { logout, usuario } = useAuth();
@@ -180,8 +184,8 @@ const DashboardEstudiante = () => (
 );
 
 const DashboardTutor = () => (
-  <NavbarSimple titulo="Dashboard Tutor">
-    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14 }}>Módulo en construcción...</p>
+  <NavbarSimple titulo="Mis ejercicios">
+    <EjerciciosPage />
   </NavbarSimple>
 );
 
@@ -258,14 +262,45 @@ export default function App() {
         }
       />
 
-      <Route
-        path="/tutor/dashboard"
-        element={
-          <ProtectedRoute roles={['TUTOR']}>
-            <DashboardTutor />
-          </ProtectedRoute>
-        }
-      />
+          <Route
+      path="/tutor/dashboard"
+      element={
+        <ProtectedRoute roles={['TUTOR']}>
+          <DashboardTutor />
+        </ProtectedRoute>
+      }
+    />
+
+  
+    <Route
+      path="/tutor/ejercicios"
+      element={
+        <ProtectedRoute roles={['TUTOR', 'ADMIN']}>
+          <NavbarSimple titulo="Banco de ejercicios">
+            <EjerciciosPage />
+          </NavbarSimple>
+        </ProtectedRoute>
+      }
+    />
+
+    <Route path="/tutor/ejercicios/:id" element={
+      <ProtectedRoute roles={['TUTOR', 'ADMIN', 'REVISOR']}>
+        <NavbarSimple titulo="Detalle del ejercicio">
+          <DetalleEjercicioPage />
+        </NavbarSimple>
+      </ProtectedRoute>
+    }/>
+
+    <Route
+      path="/tutor/ejercicios/crear"
+      element={
+        <ProtectedRoute roles={['TUTOR', 'ADMIN']}>
+          <NavbarSimple titulo="Nuevo ejercicio">
+            <CrearEjercicioPage />
+          </NavbarSimple>
+        </ProtectedRoute>
+      }
+    />
 
       <Route
         path="/revisor/dashboard"
