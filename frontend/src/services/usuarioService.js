@@ -1,15 +1,18 @@
 import api from './api';
 
 export const usuarioService = {
-  async listar(filtros = {}) {
-    const params = new URLSearchParams();
-    if (filtros.buscar)  params.append('buscar', filtros.buscar);
-    if (filtros.rol_id)  params.append('rol_id', filtros.rol_id);
-    if (filtros.activo)  params.append('activo', filtros.activo);
-    const res = await api.get(`/usuarios?${params.toString()}`);
-    return res.data.data;
-  },
+async listar(filtros = {}) {
+  const params = new URLSearchParams();
 
+  if (filtros.buscar) params.append('buscar', filtros.buscar);
+  if (filtros.rol_id) params.append('rol_id', filtros.rol_id);
+  if (filtros.activo) params.append('activo', filtros.activo);
+  if (filtros.per_page) params.append('per_page', filtros.per_page);
+  if (filtros.page) params.append('page', filtros.page);
+
+  const res = await api.get(`/usuarios?${params.toString()}`);
+  return res.data.data;
+},
   async verPerfil(id) {
     const res = await api.get(`/usuarios/${id}`);
     return res.data.data;

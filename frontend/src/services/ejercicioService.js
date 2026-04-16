@@ -1,17 +1,18 @@
 import api from './api';
 
 export const ejercicioService = {
-  async listar(filtros = {}) {
-    const params = new URLSearchParams();
-    if (filtros.modulo_id)        params.append('modulo_id',        filtros.modulo_id);
-    if (filtros.subtema_id)       params.append('subtema_id',       filtros.subtema_id);
-    if (filtros.nivel_dificultad) params.append('nivel_dificultad', filtros.nivel_dificultad);
-    if (filtros.estado)           params.append('estado',           filtros.estado);
-    if (filtros.buscar)           params.append('buscar',           filtros.buscar);
-    const res = await api.get(`/ejercicios?${params.toString()}`);
-    return res.data.data;
-  },
-
+async listar(filtros = {}) {
+  const params = new URLSearchParams();
+  if (filtros.modulo_id)        params.append('modulo_id',        filtros.modulo_id);
+  if (filtros.subtema_id)       params.append('subtema_id',       filtros.subtema_id);
+  if (filtros.nivel_dificultad) params.append('nivel_dificultad', filtros.nivel_dificultad);
+  if (filtros.estado)           params.append('estado',           filtros.estado);
+  if (filtros.buscar)           params.append('buscar',           filtros.buscar);
+  if (filtros.per_page)         params.append('per_page',         filtros.per_page);
+  if (filtros.page)             params.append('page',             filtros.page);
+  const res = await api.get(`/ejercicios?${params.toString()}`);
+  return res.data.data;
+},
   async verDetalle(id) {
     const res = await api.get(`/ejercicios/${id}`);
     return res.data.data;

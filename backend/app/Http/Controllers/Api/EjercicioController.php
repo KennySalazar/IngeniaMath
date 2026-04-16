@@ -9,6 +9,7 @@ use App\Services\EjercicioService;
 use App\DAO\ModuloDAO;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class EjercicioController extends Controller
 {
@@ -17,29 +18,52 @@ class EjercicioController extends Controller
         private ModuloDAO $moduloDAO
     ) {}
 
-    // GET /api/ejercicios
-    public function index(Request $request): JsonResponse
+    private function responderError(\Throwable $e): JsonResponse
     {
-        $filtros = $request->only([
-            'modulo_id',
-            'subtema_id',
-            'nivel_dificultad',
-            'tipo_ejercicio',
-            'estado',
-            'buscar',
-            'per_page',
-        ]);
+        if ($e instanceof HttpExceptionInterface) {
+            $status = $e->getStatusCode();
+        } else {
+            $codigo = (int) $e->getCode();
 
-        $resultado = $this->ejercicioService->listar(
-            $filtros,
-            $request->user()->id,
-            $request->user()->codigoRol()
-        );
+            if (in_array($codigo, [400, 401, 403, 404, 409, 422])) {
+                $status = $codigo;
+            } else {
+                $status = 500;
+            }
+        }
 
-        return response()->json(['success' => true, 'data' => $resultado]);
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage(),
+        ], $status);
     }
 
-    // GET /api/ejercicios/{id}
+    public function index(Request $request): JsonResponse
+    {
+        try {
+            $filtros = $request->only([
+                'modulo_id',
+                'subtema_id',
+                'nivel_dificultad',
+                'tipo_ejercicio',
+                'estado',
+                'buscar',
+                'per_page',
+                'page',
+            ]);
+
+            $resultado = $this->ejercicioService->listar(
+                $filtros,
+                $request->user()->id,
+                $request->user()->codigoRol()
+            );
+
+            return response()->json(['success' => true, 'data' => $resultado]);
+        } catch (\Throwable $e) {
+            return $this->responderError($e);
+        }
+    }
+
     public function show(Request $request, int $id): JsonResponse
     {
         try {
@@ -47,13 +71,13 @@ class EjercicioController extends Controller
                 $id,
                 $request->user()->codigoRol()
             );
+
             return response()->json(['success' => true, 'data' => $ejercicio]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], $e->getCode() ?: 500);
+        } catch (\Throwable $e) {
+            return $this->responderError($e);
         }
     }
 
-    // POST /api/ejercicios
     public function store(CrearEjercicioRequest $request): JsonResponse
     {
         try {
@@ -61,13 +85,13 @@ class EjercicioController extends Controller
                 $request->validated(),
                 $request->user()->id
             );
+
             return response()->json(['success' => true, 'data' => $ejercicio], 201);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], $e->getCode() ?: 500);
+        } catch (\Throwable $e) {
+            return $this->responderError($e);
         }
     }
 
-    // PUT /api/ejercicios/{id}
     public function update(EditarEjercicioRequest $request, int $id): JsonResponse
     {
         try {
@@ -77,80 +101,111 @@ class EjercicioController extends Controller
                 $request->user()->id,
                 $request->user()->codigoRol()
             );
+
             return response()->json(['success' => true, 'data' => $ejercicio]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], $e->getCode() ?: 500);
+        } catch (\Throwable $e) {
+            return $this->responderError($e);
         }
     }
 
-    // POST /api/ejercicios/{id}/enviar-revision
     public function enviarRevision(Request $request, int $id): JsonResponse
     {
         try {
-            $ejercicio = $this->ejercicioService->enviarARevision($id, $request->user()->id);
+            $ejercicio = $this->ejercicioService->enviarARevision(
+                $id,
+                $request->user()->id
+            );
+
             return response()->json(['success' => true, 'data' => $ejercicio]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], $e->getCode() ?: 500);
+        } catch (\Throwable $e) {
+            return $this->responderError($e);
         }
     }
 
-    // POST /api/ejercicios/{id}/aprobar
     public function aprobar(Request $request, int $id): JsonResponse
     {
-        $request->validate(['notas' => ['nullable', 'string', 'max:500']]);
+        $request->validate([
+            'notas' => ['nullable', 'string', 'max:500'],
+        ]);
+
         try {
-            $ejercicio = $this->ejercicioService->aprobar($id, $request->user()->id, $request->notas);
+            $ejercicio = $this->ejercicioService->aprobar(
+                $id,
+                $request->user()->id,
+                $request->notas,
+                $request->user()->codigoRol()
+            );
+
             return response()->json(['success' => true, 'data' => $ejercicio]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], $e->getCode() ?: 500);
+        } catch (\Throwable $e) {
+            return $this->responderError($e);
         }
     }
 
-    // POST /api/ejercicios/{id}/rechazar
     public function rechazar(Request $request, int $id): JsonResponse
     {
-        $request->validate(['notas' => ['required', 'string', 'min:5', 'max:500']]);
+        $request->validate([
+            'notas' => ['required', 'string', 'min:5', 'max:500'],
+        ]);
+
         try {
-            $ejercicio = $this->ejercicioService->rechazar($id, $request->user()->id, $request->notas);
+            $ejercicio = $this->ejercicioService->rechazar(
+                $id,
+                $request->user()->id,
+                $request->notas
+            );
+
             return response()->json(['success' => true, 'data' => $ejercicio]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], $e->getCode() ?: 500);
+        } catch (\Throwable $e) {
+            return $this->responderError($e);
         }
     }
 
-    // POST /api/ejercicios/{id}/publicar
     public function publicar(Request $request, int $id): JsonResponse
     {
         try {
-            $ejercicio = $this->ejercicioService->publicar($id);
+            $ejercicio = $this->ejercicioService->publicar(
+                $id,
+                $request->user()->id
+            );
+
             return response()->json(['success' => true, 'data' => $ejercicio]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], $e->getCode() ?: 500);
+        } catch (\Throwable $e) {
+            return $this->responderError($e);
         }
     }
 
-    // POST /api/ejercicios/{id}/deshabilitar
     public function deshabilitar(Request $request, int $id): JsonResponse
     {
         try {
-            $ejercicio = $this->ejercicioService->deshabilitar($id);
+            $ejercicio = $this->ejercicioService->deshabilitar(
+                $id,
+                $request->user()->id
+            );
+
             return response()->json(['success' => true, 'data' => $ejercicio]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], $e->getCode() ?: 500);
+        } catch (\Throwable $e) {
+            return $this->responderError($e);
         }
     }
 
-    // GET /api/modulos — para poblar selectores en el formulario
     public function modulos(): JsonResponse
     {
-        $modulos = $this->moduloDAO->listarTodos();
-        return response()->json(['success' => true, 'data' => $modulos]);
+        try {
+            $modulos = $this->moduloDAO->listarTodos();
+            return response()->json(['success' => true, 'data' => $modulos]);
+        } catch (\Throwable $e) {
+            return $this->responderError($e);
+        }
     }
 
-    // GET /api/modulos/{id}/subtemas
     public function subtemas(int $moduloId): JsonResponse
     {
-        $subtemas = $this->moduloDAO->listarSubtemasPorModulo($moduloId);
-        return response()->json(['success' => true, 'data' => $subtemas]);
+        try {
+            $subtemas = $this->moduloDAO->listarSubtemasPorModulo($moduloId);
+            return response()->json(['success' => true, 'data' => $subtemas]);
+        } catch (\Throwable $e) {
+            return $this->responderError($e);
+        }
     }
 }
