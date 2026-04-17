@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import { ProtectedRoute } from './router/ProtectedRoute';
@@ -12,6 +13,13 @@ import EjerciciosPage from './pages/tutor/EjerciciosPage';
 import CrearEjercicioPage from './pages/tutor/CrearEjercicioPage';
 import DetalleEjercicioPage from './pages/tutor/DetalleEjercicioPage';
 import RevisionPage from './pages/revisor/RevisionPage';
+import DiagnosticoInicioPage    from './pages/diagnostico/DiagnosticoInicioPage';
+import DiagnosticoTestPage      from './pages/diagnostico/DiagnosticoTestPage';
+import DiagnosticoResultadosPage from './pages/diagnostico/DiagnosticoResultadosPage';
+import DiagnosticoRutaPage      from './pages/diagnostico/DiagnosticoRutaPage';
+import { diagnosticoService } from './services/diagnosticoService';
+import DashboardEstudiantePage from './pages/estudiante/DashboardEstudiantePage';
+
 
 // ── Navbar ───────────────────────────────────────────────────────────────────
 function Navbar() {
@@ -248,14 +256,74 @@ const NoAutorizado = () => (
 
 function RedireccionPorRol() {
   const { usuario } = useAuth();
+  const esEstudiante = usuario?.rol?.codigo === 'ESTUDIANTE';
+  const [diagnosticoCompleto, setDiagnosticoCompleto] = useState(
+    esEstudiante ? null : false
+  );
+
+  useEffect(() => {
+    if (!esEstudiante) return;
+
+    let activo = true;
+
+    diagnosticoService
+      .estado()
+      .then((estado) => {
+        if (activo) {
+          setDiagnosticoCompleto(estado.diagnostico_completado);
+        }
+      })
+      .catch(() => {
+        if (activo) {
+          setDiagnosticoCompleto(false);
+        }
+      });
+
+    return () => {
+      activo = false;
+    };
+  }, [esEstudiante, usuario?.id]);
+
+  if (esEstudiante && diagnosticoCompleto === null) {
+    return null;
+  }
+
   const rol = usuario?.rol?.codigo;
-  if (rol === 'ADMIN')   return <Navigate to="/admin/dashboard"     replace />;
-  if (rol === 'TUTOR')   return <Navigate to="/tutor/dashboard"     replace />;
-  if (rol === 'REVISOR') return <Navigate to="/revisor/dashboard"   replace />;
-  return                        <Navigate to="/estudiante/dashboard" replace />;
+
+  if (rol === 'ADMIN') return <Navigate to="/admin/dashboard" replace />;
+  if (rol === 'TUTOR') return <Navigate to="/tutor/dashboard" replace />;
+  if (rol === 'REVISOR') return <Navigate to="/revisor/dashboard" replace />;
+
+  if (rol === 'ESTUDIANTE') {
+    return diagnosticoCompleto
+      ? <Navigate to="/estudiante/dashboard" replace />
+      : <Navigate to="/diagnostico/inicio" replace />;
+  }
+
+  return <Navigate to="/login" replace />;
 }
 
-// ── App ──────────────────────────────────────────────────────────────────────
+
+
+function DashboardEstudianteGuard() {
+  const navigate   = useNavigate();
+  const [verificando, setVerificando] = useState(true);
+
+  useEffect(() => {
+    diagnosticoService.estado()
+      .then(estado => {
+        if (!estado.diagnostico_completado) {
+          navigate('/diagnostico/inicio', { replace: true });
+        }
+      })
+      .catch(() => {})
+      .finally(() => setVerificando(false));
+  }, [navigate]);
+
+  if (verificando) return null;
+
+  return <DashboardEstudiantePage />;
+}
 export default function App() {
   const { usuario } = useAuth();
   const rol = usuario?.rol?.codigo;
@@ -279,6 +347,11 @@ export default function App() {
       <Route path="/dashboard" element={
         <ProtectedRoute><RedireccionPorRol /></ProtectedRoute>
       }/>
+
+      <Route path="/diagnostico/inicio"     element={<ProtectedRoute roles={['ESTUDIANTE']}><DiagnosticoInicioPage /></ProtectedRoute>} />
+      <Route path="/diagnostico/test"       element={<ProtectedRoute roles={['ESTUDIANTE']}><DiagnosticoTestPage /></ProtectedRoute>} />
+      <Route path="/diagnostico/resultados" element={<ProtectedRoute roles={['ESTUDIANTE']}><DiagnosticoResultadosPage /></ProtectedRoute>} />
+      <Route path="/diagnostico/ruta"       element={<ProtectedRoute roles={['ESTUDIANTE']}><DiagnosticoRutaPage /></ProtectedRoute>} />
 
       {/* Perfil */}
       <Route path="/perfil" element={
@@ -347,9 +420,14 @@ export default function App() {
       }/>
 
       {/* Estudiante */}
-      <Route path="/estudiante/dashboard" element={
-        <ProtectedRoute roles={['ESTUDIANTE']}><DashboardEstudiante /></ProtectedRoute>
-      }/>
+    <Route path="/estudiante/dashboard" element={
+  <ProtectedRoute roles={['ESTUDIANTE']}>
+    <SimpleLayout titulo="">
+      <DashboardEstudianteGuard />
+    </SimpleLayout>
+  </ProtectedRoute>
+}/>
+
     </Routes>
   );
 }

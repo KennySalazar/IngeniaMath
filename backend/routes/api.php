@@ -5,6 +5,11 @@ use App\Http\Controllers\Api\UsuarioController;
 use App\Http\Controllers\Api\PasswordRecuperacionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\EjercicioController;
+use App\Http\Controllers\Api\DiagnosticoController;
+use App\Http\Controllers\Api\RutaAprendizajeController;
+use App\Http\Controllers\Api\PlanEstudioController;
+
+
 
 // Ping
 Route::get('/ping', fn() => response()->json([
@@ -47,6 +52,25 @@ Route::middleware('auth:sanctum')->group(function () {
     // Selectores públicos para formularios — cualquier rol autenticado
     Route::get('/modulos',                  [EjercicioController::class, 'modulos']);
     Route::get('/modulos/{id}/subtemas',    [EjercicioController::class, 'subtemas']);
+
+
+
+    Route::prefix('diagnostico')->group(function () {
+        Route::get('/estado',                       [DiagnosticoController::class, 'estado']);
+        Route::post('/iniciar',                     [DiagnosticoController::class, 'iniciar']);
+        Route::post('/{intentoId}/responder',       [DiagnosticoController::class, 'responder']);
+        Route::post('/{intentoId}/finalizar',       [DiagnosticoController::class, 'finalizar']);
+        Route::get('/{intentoId}/resultados',       [DiagnosticoController::class, 'resultados']);
+    });
+
+    Route::prefix('ruta')->group(function () {
+        Route::get('/',  [RutaAprendizajeController::class, 'obtener']);
+    });
+
+    Route::prefix('plan')->group(function () {
+        Route::post('/generar', [PlanEstudioController::class, 'generar']);
+        Route::get('/',         [PlanEstudioController::class, 'obtener']);
+    });
 
     // Ejercicios — tutor y admin pueden crear y listar
     Route::middleware('rol:TUTOR,ADMIN,REVISOR,ESTUDIANTE')->group(function () {

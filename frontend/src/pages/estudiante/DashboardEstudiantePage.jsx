@@ -1,0 +1,296 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { diagnosticoService } from '../../services/diagnosticoService';
+import './DashboardEstudiantePage.css';
+
+const CLASIFICACION = {
+  DOMINADO:      { color: '#10b981', label: 'Dominado'     },
+  EN_DESARROLLO: { color: '#f59e0b', label: 'En desarrollo' },
+  DEFICIENTE:    { color: '#ef4444', label: 'Deficiente'    },
+};
+
+const DIAS = ['', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+export default function DashboardEstudiantePage() {
+  const navigate = useNavigate();
+
+  const [estado,   setEstado]   = useState(null);
+  const [ruta,     setRuta]     = useState(null);
+  const [plan,     setPlan]     = useState(null);
+  const [cargando, setCargando] = useState(true);
+
+  useEffect(() => {
+    Promise.allSettled([
+      diagnosticoService.estado(),
+      diagnosticoService.obtenerRuta(),
+      diagnosticoService.obtenerPlan(),
+    ]).then(([estadoRes, rutaRes, planRes]) => {
+      if (estadoRes.status === 'fulfilled') setEstado(estadoRes.value);
+      if (rutaRes.status   === 'fulfilled') setRuta(rutaRes.value);
+      if (planRes.status   === 'fulfilled') setPlan(planRes.value);
+    }).finally(() => setCargando(false));
+  }, []);
+
+  if (cargando) return (
+    <div className="dash-loading">Cargando tu panel...</div>
+  );
+
+  const hoy        = new Date().getDay(); // 0=domingo, 1=lunes...
+  const diaHoy     = hoy === 0 ? 7 : hoy; // adaptamos al formato 1-7
+  const temaHoy    = plan?.dias?.find(d => d.dia_numero === diaHoy);
+
+  return (
+    <div className="dash-page">
+
+      {/* Saludo */}
+      <div className="dash-bienvenida">
+        <div>
+          <h1 className="dash-titulo">Panel del estudiante</h1>
+          <p className="dash-subtitulo">
+            Aqui puedes ver tu progreso, tu ruta de aprendizaje y tu plan semanal.
+          </p>
+        </div>
+      </div>
+
+      <div className="dash-grid">
+
+        {/* ── Tarjeta diagnóstico ── */}
+        <div className="dash-card dash-card-diagnostico">
+          <div className="dash-card-header">
+            <div className="dash-card-icono dash-icono-diag">D</div>
+            <div>
+              <h2 className="dash-card-titulo">Diagnóstico inicial</h2>
+              <p className="dash-card-subtitulo">Tu nivel por módulo</p>
+            </div>
+          </div>
+
+          {estado?.diagnostico_completado ? (
+            <>
+              {ruta && (
+                <div className="dash-modulos-resumen">
+                  {ruta.modulos.map(m => (
+                    <div key={m.modulo_id} className="dash-modulo-chip">
+                      <span className="dash-modulo-chip-nombre">{m.modulo_nombre}</span>
+                      <span
+                        className="dash-modulo-chip-badge"
+                        style={{
+                          background: 'rgba(245,158,11,0.15)',
+                          color: '#fbbf24',
+                        }}
+                      >
+                        En ruta
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <button
+                className="dash-btn-secundario"
+                onClick={() => navigate('/diagnostico/ruta')}
+              >
+                Ver resultados completos
+              </button>
+            </>
+          ) : (
+            <div className="dash-sin-datos">
+              <p>No has completado el diagnóstico.</p>
+              <button
+                className="dash-btn-primario"
+                onClick={() => navigate('/diagnostico/inicio')}
+              >
+                Iniciar diagnóstico
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* ── Tarjeta ruta ── */}
+        <div className="dash-card dash-card-ruta">
+          <div className="dash-card-header">
+            <div className="dash-card-icono dash-icono-ruta">R</div>
+            <div>
+              <h2 className="dash-card-titulo">Ruta de aprendizaje</h2>
+              <p className="dash-card-subtitulo">Personalizada para ti</p>
+            </div>
+          </div>
+
+          {ruta ? (
+            <>
+              <div className="dash-stats-fila">
+                <div className="dash-stat">
+                  <span className="dash-stat-num">{ruta.total_modulos}</span>
+                  <span className="dash-stat-label">Módulos</span>
+                </div>
+                <div className="dash-stat">
+                  <span className="dash-stat-num">{ruta.total_subtemas}</span>
+                  <span className="dash-stat-label">Subtemas</span>
+                </div>
+                <div className="dash-stat">
+                  <span className="dash-stat-num">
+                    {ruta.modulos.reduce((acc, m) =>
+                      acc + m.subtemas.filter(s => s.estado === 'PENDIENTE').length, 0
+                    )}
+                  </span>
+                  <span className="dash-stat-label">Pendientes</span>
+                </div>
+              </div>
+
+              {/* Próximo subtema a estudiar */}
+              {ruta.modulos[0]?.subtemas[0] && (
+                <div className="dash-proximo">
+                  <span className="dash-proximo-label">Siguiente a estudiar</span>
+                  <span className="dash-proximo-subtema">
+                    {ruta.modulos[0].subtemas[0].subtema_nombre}
+                  </span>
+                  <span className="dash-proximo-modulo">
+                    {ruta.modulos[0].modulo_nombre}
+                  </span>
+                </div>
+              )}
+
+              <button
+                className="dash-btn-secundario"
+                onClick={() => navigate('/diagnostico/ruta')}
+              >
+                Ver ruta completa
+              </button>
+            </>
+          ) : (
+            <div className="dash-sin-datos">
+              <p>Tu ruta se generara al completar el diagnostico.</p>
+            </div>
+          )}
+        </div>
+
+        {/* ── Tarjeta plan semanal ── */}
+        <div className="dash-card dash-card-plan dash-card-ancha">
+          <div className="dash-card-header">
+            <div className="dash-card-icono dash-icono-plan">P</div>
+            <div>
+              <h2 className="dash-card-titulo">Plan de estudio semanal</h2>
+              <p className="dash-card-subtitulo">
+                {plan
+                  ? `${plan.horas_disponibles_semana} horas disponibles por semana`
+                  : 'Basado en tus horas disponibles'}
+              </p>
+            </div>
+          </div>
+
+          {plan ? (
+            <>
+              <div className="dash-stats-fila">
+                <div className="dash-stat">
+                  <span className="dash-stat-num">{plan.horas_disponibles_semana}h</span>
+                  <span className="dash-stat-label">Por semana</span>
+                </div>
+                <div className="dash-stat">
+                  <span className="dash-stat-num">{plan.total_ejercicios_semana}</span>
+                  <span className="dash-stat-label">Ejercicios</span>
+                </div>
+                <div className="dash-stat">
+                  <span className="dash-stat-num">{plan.total_minutos_semana}</span>
+                  <span className="dash-stat-label">Minutos</span>
+                </div>
+              </div>
+
+              {/* Tema de hoy */}
+              {temaHoy && (
+                <div className="dash-tema-hoy">
+                  <span className="dash-tema-hoy-label">Tema de hoy</span>
+                  <div className="dash-tema-hoy-contenido">
+                    <div>
+                      <p className="dash-tema-hoy-subtema">{temaHoy.subtema_nombre}</p>
+                      <p className="dash-tema-hoy-modulo">{temaHoy.modulo_nombre}</p>
+                    </div>
+                    <div className="dash-tema-hoy-meta">
+                      <span className="dash-tema-hoy-ejs">{temaHoy.ejercicios_recomendados} ej.</span>
+                      <span className="dash-tema-hoy-min">{temaHoy.tiempo_estimado_minutos} min</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Plan de la semana */}
+              <div className="dash-semana">
+                {plan.dias.map(dia => {
+                  const esHoy = dia.dia_numero === diaHoy;
+                  return (
+                    <div
+                      key={dia.dia_numero}
+                      className={`dash-dia ${esHoy ? 'dash-dia-hoy' : ''}`}
+                    >
+                      <span className="dash-dia-nombre">{DIAS[dia.dia_numero]}</span>
+                      <span className="dash-dia-subtema">{dia.subtema_nombre}</span>
+                      <span className="dash-dia-min">{dia.tiempo_estimado_minutos}m</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <div className="dash-sin-datos">
+              <p>El plan se generara al completar el diagnostico.</p>
+            </div>
+          )}
+        </div>
+
+        {/* ── Accesos rápidos ── */}
+        <div className="dash-card dash-card-accesos dash-card-ancha">
+          <h2 className="dash-card-titulo" style={{ marginBottom: '1.25rem' }}>
+            Accesos rapidos
+          </h2>
+          <div className="dash-accesos-grid">
+
+            <button
+              className="dash-acceso"
+              onClick={() => navigate('/diagnostico/ruta')}
+            >
+              <div className="dash-acceso-icono" style={{ background: 'rgba(99,102,241,0.15)', color: '#818cf8' }}>
+                D
+              </div>
+              <span className="dash-acceso-label">Resultados del diagnostico</span>
+              <span className="dash-acceso-flecha">→</span>
+            </button>
+
+            <button
+              className="dash-acceso"
+              onClick={() => navigate('/diagnostico/ruta')}
+            >
+              <div className="dash-acceso-icono" style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981' }}>
+                R
+              </div>
+              <span className="dash-acceso-label">Mi ruta de aprendizaje</span>
+              <span className="dash-acceso-flecha">→</span>
+            </button>
+
+            <button
+              className="dash-acceso"
+              onClick={() => navigate('/diagnostico/ruta')}
+            >
+              <div className="dash-acceso-icono" style={{ background: 'rgba(245,158,11,0.15)', color: '#fbbf24' }}>
+                P
+              </div>
+              <span className="dash-acceso-label">Plan semanal</span>
+              <span className="dash-acceso-flecha">→</span>
+            </button>
+
+            <button
+              className="dash-acceso dash-acceso-disabled"
+              disabled
+            >
+              <div className="dash-acceso-icono" style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.2)' }}>
+                E
+              </div>
+              <span className="dash-acceso-label" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                Practica — Proximo
+              </span>
+              <span className="dash-acceso-flecha" style={{ color: 'rgba(255,255,255,0.15)' }}>→</span>
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
