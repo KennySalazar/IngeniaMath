@@ -1,15 +1,14 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://192.168.0.8:8000/api',
+  baseURL: 'http://127.0.0.1:8000/api',
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    Accept: 'application/json',
   },
-  withCredentials: false, // No enviar cookies, usamos token en headers
+  withCredentials: false,
 });
 
-// Interceptor: adjunta token automáticamente si existe
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -18,7 +17,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Interceptor: maneja 401 globalmente
 api.interceptors.response.use(
   (response) => response,
   (error) => {

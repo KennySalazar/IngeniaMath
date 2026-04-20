@@ -1,0 +1,228 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+.practica-guardados-loading {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.4);
+  font-family: 'DM Sans', sans-serif;
+}
+
+.practica-guardados-page {
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.practica-guardados-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.practica-guardados-titulo {
+  margin: 0;
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  color: white;
+}
+
+.practica-guardados-subtitulo {
+  margin: 6px 0 0;
+  color: rgba(255,255,255,0.45);
+  font-size: 14px;
+}
+
+.practica-guardados-top-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.practica-guardados-error {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.25);
+  color: #fca5a5;
+  font-size: 13px;
+}
+
+.practica-guardados-resumen {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 10px;
+}
+
+.practica-guardados-stat {
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.practica-guardados-stat span {
+  font-size: 12px;
+  color: rgba(255,255,255,0.38);
+  text-transform: uppercase;
+}
+
+.practica-guardados-stat strong {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  color: white;
+}
+
+.practica-guardados-empty {
+  padding: 2rem;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  align-items: flex-start;
+}
+
+.practica-guardados-empty h2 {
+  margin: 0;
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  color: white;
+}
+
+.practica-guardados-empty p {
+  margin: 0;
+  color: rgba(255,255,255,0.48);
+}
+
+.practica-guardados-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.practica-guardados-card {
+  padding: 1.25rem;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.practica-guardados-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.practica-guardados-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.practica-guardados-tag {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(99,102,241,0.14);
+  color: #a5b4fc;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.practica-guardados-meta {
+  color: rgba(255,255,255,0.45);
+  font-size: 12px;
+}
+
+.practica-guardados-enunciado,
+.practica-guardados-render {
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.88);
+  line-height: 1.7;
+}
+
+.practica-guardados-imagen {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+}
+
+.practica-guardados-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.practica-guardados-btn {
+  height: 42px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.practica-guardados-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.practica-guardados-btn-primario {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.practica-guardados-btn-secundario {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7);
+}
+
+.practica-guardados-btn-peligro {
+  background: rgba(239,68,68,0.14);
+  border: 1px solid rgba(239,68,68,0.25);
+  color: #fca5a5;
+}
+
+.practica-guardados-detalle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.practica-guardados-bloque {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.practica-guardados-bloque h3 {
+  margin: 0;
+  color: white;
+  font-size: 15px;
+}
+
+@media (max-width: 800px) {
+  .practica-guardados-hero {
+    flex-direction: column;
+  }
+}

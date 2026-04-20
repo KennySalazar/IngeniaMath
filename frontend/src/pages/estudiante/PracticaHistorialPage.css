@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+.practica-historial-loading {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.4);
+  font-family: 'DM Sans', sans-serif;
+}
+
+.practica-historial-page {
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.practica-historial-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.practica-historial-titulo {
+  margin: 0;
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  color: white;
+}
+
+.practica-historial-subtitulo {
+  margin: 6px 0 0;
+  color: rgba(255,255,255,0.45);
+  font-size: 14px;
+}
+
+.practica-historial-top-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.practica-historial-error {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.25);
+  color: #fca5a5;
+  font-size: 13px;
+}
+
+.practica-historial-resumen {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.practica-historial-stat {
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.practica-historial-stat span {
+  font-size: 12px;
+  color: rgba(255,255,255,0.38);
+  text-transform: uppercase;
+}
+
+.practica-historial-stat strong {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  color: white;
+}
+
+.practica-historial-empty {
+  padding: 2rem;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  align-items: flex-start;
+}
+
+.practica-historial-empty h2 {
+  margin: 0;
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  color: white;
+}
+
+.practica-historial-empty p {
+  margin: 0;
+  color: rgba(255,255,255,0.48);
+}
+
+.practica-historial-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.practica-historial-card {
+  padding: 1.25rem;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.practica-historial-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.practica-historial-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.practica-historial-tag {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(99,102,241,0.14);
+  color: #a5b4fc;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.practica-historial-meta {
+  color: rgba(255,255,255,0.45);
+  font-size: 12px;
+}
+
+.practica-historial-stats {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+.practica-historial-stat-card {
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+}
+
+.practica-historial-stat-card span {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+
+.practica-historial-stat-card strong {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  color: white;
+}
+
+.practica-historial-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.practica-historial-btn {
+  height: 42px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.practica-historial-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.practica-historial-btn-primario {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.practica-historial-btn-secundario {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7);
+}
+
+@media (max-width: 1000px) {
+  .practica-historial-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .practica-historial-hero {
+    flex-direction: column;
+  }
+
+  .practica-historial-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .practica-historial-stats {
+    grid-template-columns: 1fr;
+  }
+}

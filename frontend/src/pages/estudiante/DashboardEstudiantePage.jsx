@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { diagnosticoService } from '../../services/diagnosticoService';
 import './DashboardEstudiantePage.css';
+import { practicaService } from '../../services/practicaService';
 
 const CLASIFICACION = {
   DOMINADO:      { color: '#10b981', label: 'Dominado'     },
@@ -18,18 +19,26 @@ export default function DashboardEstudiantePage() {
   const [ruta,     setRuta]     = useState(null);
   const [plan,     setPlan]     = useState(null);
   const [cargando, setCargando] = useState(true);
+  const [sesionActiva, setSesionActiva] = useState(null);
+  const [resumenPractica, setResumenPractica] = useState(null);
 
   useEffect(() => {
-    Promise.allSettled([
-      diagnosticoService.estado(),
-      diagnosticoService.obtenerRuta(),
-      diagnosticoService.obtenerPlan(),
-    ]).then(([estadoRes, rutaRes, planRes]) => {
-      if (estadoRes.status === 'fulfilled') setEstado(estadoRes.value);
-      if (rutaRes.status   === 'fulfilled') setRuta(rutaRes.value);
-      if (planRes.status   === 'fulfilled') setPlan(planRes.value);
-    }).finally(() => setCargando(false));
-  }, []);
+  Promise.allSettled([
+    diagnosticoService.estado(),
+    diagnosticoService.obtenerRuta(),
+    diagnosticoService.obtenerPlan(),
+    practicaService.activa(),
+  ]).then(([estadoRes, rutaRes, planRes, practicaRes]) => {
+    if (estadoRes.status === 'fulfilled') setEstado(estadoRes.value);
+    if (rutaRes.status === 'fulfilled') setRuta(rutaRes.value);
+    if (planRes.status === 'fulfilled') setPlan(planRes.value);
+
+    if (practicaRes.status === 'fulfilled' && practicaRes.value?.activa) {
+      setSesionActiva(practicaRes.value.sesion);
+      setResumenPractica(practicaRes.value.resumen);
+    }
+      }).finally(() => setCargando(false));
+    }, []);
 
   if (cargando) return (
     <div className="dash-loading">Cargando tu panel...</div>
@@ -234,6 +243,68 @@ export default function DashboardEstudiantePage() {
           )}
         </div>
 
+        <div className="dash-card dash-card-practica dash-card-ancha">
+          <div className="dash-card-header">
+            <div className="dash-card-icono dash-icono-practica">E</div>
+            <div>
+              <h2 className="dash-card-titulo">Practica</h2>
+              <p className="dash-card-subtitulo">
+                {sesionActiva ? 'Tienes una sesion lista para continuar' : 'Inicia una practica libre o guiada'}
+              </p>
+            </div>
+          </div>
+
+          {sesionActiva ? (
+            <>
+              <div className="dash-stats-fila">
+                <div className="dash-stat">
+                  <span className="dash-stat-num">{resumenPractica?.total_ejercicios || 0}</span>
+                  <span className="dash-stat-label">Total</span>
+                </div>
+                <div className="dash-stat">
+                  <span className="dash-stat-num">{resumenPractica?.total_correctos || 0}</span>
+                  <span className="dash-stat-label">Correctos</span>
+                </div>
+                <div className="dash-stat">
+                  <span className="dash-stat-num">{resumenPractica?.porcentaje_aciertos || 0}%</span>
+                  <span className="dash-stat-label">Aciertos</span>
+                </div>
+                <div className="dash-stat">
+                  <span className="dash-stat-num">{resumenPractica?.tiempo_total_minutos || 0}</span>
+                  <span className="dash-stat-label">Minutos</span>
+                </div>
+              </div>
+
+              <div className="dash-proximo dash-proximo-practica">
+                <span className="dash-proximo-label">Sesion activa</span>
+                <span className="dash-proximo-subtema">
+                  {sesionActiva.subtema_nombre || 'Practica general'}
+                </span>
+                <span className="dash-proximo-modulo">
+                  {sesionActiva.modo} · {sesionActiva.modulo_nombre || 'Modulo'} · {sesionActiva.nivel_dificultad || 'N/A'}
+                </span>
+              </div>
+
+              <button
+                className="dash-btn-secundario"
+                onClick={() => navigate(`/estudiante/practica/sesion/${sesionActiva.id}`)}
+              >
+                Continuar sesion
+              </button>
+            </>
+          ) : (
+            <div className="dash-sin-datos">
+              <p>No tienes una sesion de practica activa.</p>
+              <button
+                className="dash-btn-primario"
+                onClick={() => navigate('/estudiante/practica')}
+              >
+                Ir a practica
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* ── Accesos rápidos ── */}
         <div className="dash-card dash-card-accesos dash-card-ancha">
           <h2 className="dash-card-titulo" style={{ marginBottom: '1.25rem' }}>
@@ -242,15 +313,17 @@ export default function DashboardEstudiantePage() {
           <div className="dash-accesos-grid">
 
             <button
-              className="dash-acceso"
-              onClick={() => navigate('/diagnostico/ruta')}
-            >
-              <div className="dash-acceso-icono" style={{ background: 'rgba(99,102,241,0.15)', color: '#818cf8' }}>
-                D
-              </div>
-              <span className="dash-acceso-label">Resultados del diagnostico</span>
-              <span className="dash-acceso-flecha">→</span>
-            </button>
+                className="dash-acceso"
+                onClick={() => navigate(sesionActiva ? `/estudiante/practica/sesion/${sesionActiva.id}` : '/estudiante/practica')}
+              >
+                <div className="dash-acceso-icono" style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981' }}>
+                  E
+                </div>
+                <span className="dash-acceso-label">
+                  {sesionActiva ? 'Continuar practica' : 'Practica'}
+                </span>
+                <span className="dash-acceso-flecha">→</span>
+              </button>
 
             <button
               className="dash-acceso"
@@ -275,16 +348,14 @@ export default function DashboardEstudiantePage() {
             </button>
 
             <button
-              className="dash-acceso dash-acceso-disabled"
-              disabled
+              className="dash-acceso"
+              onClick={() => navigate('/estudiante/practica')}
             >
-              <div className="dash-acceso-icono" style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.2)' }}>
+              <div className="dash-acceso-icono" style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981' }}>
                 E
               </div>
-              <span className="dash-acceso-label" style={{ color: 'rgba(255,255,255,0.25)' }}>
-                Practica — Proximo
-              </span>
-              <span className="dash-acceso-flecha" style={{ color: 'rgba(255,255,255,0.15)' }}>→</span>
+              <span className="dash-acceso-label">Practica</span>
+              <span className="dash-acceso-flecha">→</span>
             </button>
 
           </div>

@@ -8,7 +8,7 @@ use App\Http\Controllers\Api\EjercicioController;
 use App\Http\Controllers\Api\DiagnosticoController;
 use App\Http\Controllers\Api\RutaAprendizajeController;
 use App\Http\Controllers\Api\PlanEstudioController;
-
+use App\Http\Controllers\Api\PracticaController;
 
 
 // Ping
@@ -94,5 +94,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('rol:ADMIN')->group(function () {
         Route::post('/ejercicios/{id}/publicar',     [EjercicioController::class, 'publicar']);
         Route::post('/ejercicios/{id}/deshabilitar', [EjercicioController::class, 'deshabilitar']);
+    });
+
+        Route::middleware('rol:ESTUDIANTE')->prefix('practica')->group(function () {
+        Route::get('/activa', [PracticaController::class, 'activa']);
+        Route::get('/historial', [PracticaController::class, 'historial']);
+        Route::post('/iniciar', [PracticaController::class, 'iniciar']);
+        Route::post('/guardados', [PracticaController::class, 'guardarParaDespues']);
+        Route::get('/guardados', [PracticaController::class, 'guardados']);
+        Route::delete('/guardados/{ejercicioId}', [PracticaController::class, 'eliminarGuardado']);
+        Route::get('/{sesionId}', [PracticaController::class, 'detalle']);
+        Route::post('/{sesionId}/responder', [PracticaController::class, 'responder']);
+        Route::post('/{sesionId}/finalizar', [PracticaController::class, 'finalizar']);
+        Route::get('/{sesionId}/resumen', [PracticaController::class, 'resumen']);
     });
 });

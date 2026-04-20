@@ -1,0 +1,487 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+.practica-sesion-loading {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.4);
+  font-family: 'DM Sans', sans-serif;
+}
+
+.practica-sesion-page {
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.practica-sesion-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.practica-sesion-titulo {
+  margin: 0;
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  color: white;
+}
+
+.practica-sesion-subtitulo {
+  margin: 6px 0 0;
+  color: rgba(255,255,255,0.45);
+  font-size: 14px;
+}
+
+.practica-sesion-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.practica-inicio-activa {
+  background: rgba(16,185,129,0.06);
+  border: 1px solid rgba(16,185,129,0.18);
+  border-radius: 18px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.practica-inicio-activa-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.practica-inicio-activa-info h2 {
+  margin: 0;
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  color: white;
+}
+
+.practica-inicio-activa-info p {
+  margin: 6px 0 0;
+  color: rgba(255,255,255,0.58);
+  font-size: 13px;
+}
+
+.practica-inicio-activa-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.practica-inicio-activa-stat {
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.practica-inicio-activa-stat span {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+
+.practica-inicio-activa-stat strong {
+  color: white;
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+}
+
+.practica-inicio-activa-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.practica-sesion-btn {
+  height: 42px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.practica-sesion-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.practica-sesion-btn-primario {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.practica-sesion-btn-secundario {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7);
+}
+
+.practica-sesion-btn-peligro {
+  background: rgba(239,68,68,0.14);
+  border: 1px solid rgba(239,68,68,0.25);
+  color: #fca5a5;
+}
+
+.practica-sesion-error {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.25);
+  color: #fca5a5;
+  font-size: 13px;
+}
+
+.practica-sesion-exito {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(16,185,129,0.1);
+  border: 1px solid rgba(16,185,129,0.25);
+  color: #a7f3d0;
+  font-size: 13px;
+}
+
+.practica-sesion-avisos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.practica-sesion-aviso {
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.practica-sesion-aviso-success {
+  background: rgba(16,185,129,0.1);
+  border: 1px solid rgba(16,185,129,0.25);
+  color: #a7f3d0;
+}
+
+.practica-sesion-aviso-warning {
+  background: rgba(245,158,11,0.1);
+  border: 1px solid rgba(245,158,11,0.25);
+  color: #fcd34d;
+}
+
+.practica-sesion-aviso-info {
+  background: rgba(59,130,246,0.1);
+  border: 1px solid rgba(59,130,246,0.25);
+  color: #93c5fd;
+}
+
+.practica-sesion-resumen-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.practica-sesion-pill {
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.practica-sesion-pill span {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+
+.practica-sesion-pill strong {
+  color: white;
+  font-size: 13px;
+}
+
+.practica-sesion-stats {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+.practica-sesion-stat {
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+}
+
+.practica-sesion-stat span {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+
+.practica-sesion-stat strong {
+  font-family: 'Syne', sans-serif;
+  font-size: 24px;
+  color: white;
+}
+
+.practica-sesion-card {
+  padding: 1.5rem;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.practica-sesion-card-titulo {
+  margin: 0;
+  font-family: 'Syne', sans-serif;
+  color: white;
+  font-size: 20px;
+}
+
+.practica-sesion-card-texto {
+  margin: 0;
+  color: rgba(255,255,255,0.48);
+  font-size: 14px;
+}
+
+.practica-sesion-etiqueta {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(99,102,241,0.14);
+  color: #a5b4fc;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.practica-sesion-final-mensaje {
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.82);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.practica-render-box {
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.88);
+  line-height: 1.7;
+}
+
+.practica-enunciado {
+  font-size: 15px;
+}
+
+.practica-sesion-imagen {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+}
+
+.practica-sesion-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.practica-sesion-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.practica-opcion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.8);
+  cursor: pointer;
+}
+
+.practica-opcion input {
+  accent-color: #10b981;
+}
+
+.practica-opcion-activa {
+  border-color: rgba(16,185,129,0.35);
+  background: rgba(16,185,129,0.08);
+}
+
+.practica-sesion-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.practica-sesion-campo label {
+  color: rgba(255,255,255,0.65);
+  font-size: 13px;
+}
+
+.practica-sesion-campo input {
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  color: white;
+  padding: 0 12px;
+  outline: none;
+}
+
+.practica-sesion-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255,255,255,0.65);
+  font-size: 13px;
+}
+
+.practica-sesion-check input {
+  accent-color: #10b981;
+}
+
+.practica-resultado {
+  padding: 14px;
+  border-radius: 12px;
+}
+
+.practica-resultado h2 {
+  margin: 0 0 6px;
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+}
+
+.practica-resultado p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.practica-resultado-ok {
+  background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.24);
+  color: #a7f3d0;
+}
+
+.practica-resultado-bad {
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.24);
+  color: #fecaca;
+}
+
+.practica-sesion-bloque {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.practica-sesion-bloque h3 {
+  margin: 0;
+  color: white;
+  font-size: 15px;
+}
+
+.practica-sesion-final-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.practica-sesion-final-item {
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.practica-sesion-final-item span {
+  font-size: 12px;
+  color: rgba(255,255,255,0.38);
+}
+
+.practica-sesion-final-item strong {
+  color: white;
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+}
+
+.practica-sesion-actions-final {
+  margin-top: 6px;
+}
+
+@media (max-width: 900px) {
+  .practica-sesion-top {
+    flex-direction: column;
+  }
+
+  .practica-sesion-resumen-bar,
+  .practica-sesion-stats,
+  .practica-sesion-final-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .practica-sesion-resumen-bar,
+  .practica-sesion-stats,
+  .practica-sesion-final-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .practica-inicio-hero-row {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .practica-inicio-activa-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+.practica-inicio-btn-secundario {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.78);
+}
+}
