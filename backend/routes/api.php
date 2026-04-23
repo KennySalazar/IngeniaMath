@@ -9,6 +9,8 @@ use App\Http\Controllers\Api\DiagnosticoController;
 use App\Http\Controllers\Api\RutaAprendizajeController;
 use App\Http\Controllers\Api\PlanEstudioController;
 use App\Http\Controllers\Api\PracticaController;
+use App\Http\Controllers\Api\SimulacroController;
+
 
 
 // Ping
@@ -107,5 +109,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{sesionId}/responder', [PracticaController::class, 'responder']);
         Route::post('/{sesionId}/finalizar', [PracticaController::class, 'finalizar']);
         Route::get('/{sesionId}/resumen', [PracticaController::class, 'resumen']);
+    });
+
+        Route::middleware('rol:ESTUDIANTE')->prefix('simulacros')->group(function () {
+        Route::get('/configuracion', [SimulacroController::class, 'configuracion']);
+        Route::get('/activa', [SimulacroController::class, 'activa']);
+        Route::get('/historial', [SimulacroController::class, 'historial']);
+        Route::post('/iniciar', [SimulacroController::class, 'iniciar']);
+        Route::get('/{simulacroId}', [SimulacroController::class, 'detalle']);
+        Route::post('/{simulacroId}/responder', [SimulacroController::class, 'responder']);
+        Route::post('/{simulacroId}/finalizar', [SimulacroController::class, 'finalizar']);
+        
     });
 });

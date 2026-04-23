@@ -23,6 +23,9 @@ import PracticaInicioPage from './pages/estudiante/PracticaInicioPage';
 import PracticaSesionPage from './pages/estudiante/PracticaSesionPage';
 import PracticaGuardadosPage from './pages/estudiante/PracticaGuardadosPage';
 import PracticaHistorialPage from './pages/estudiante/PracticaHistorialPage';
+import SimulacrosInicioPage from './pages/estudiante/SimulacrosInicioPage';
+import SimulacroSesionPage from './pages/estudiante/SimulacroSesionPage';
+import SimulacroHistorialPage from './pages/estudiante/SimulacroHistorialPage';
 
 // ── Navbar ───────────────────────────────────────────────────────────────────
 function Navbar() {
@@ -455,6 +458,30 @@ export default function App() {
   </ProtectedRoute>
 }/>
 
+<Route path="/estudiante/simulacros" element={
+  <ProtectedRoute roles={['ESTUDIANTE']}>
+    <SimpleLayout titulo="Simulacros">
+      <SimulacrosInicioPage />
+    </SimpleLayout>
+  </ProtectedRoute>
+}/>
+
+<Route path="/estudiante/simulacros/sesion/:simulacroId" element={
+  <ProtectedRoute roles={['ESTUDIANTE']}>
+    <SimpleLayout titulo="Sesion de simulacro">
+      <SimulacroSesionPage />
+    </SimpleLayout>
+  </ProtectedRoute>
+}/>
+
+<Route path="/estudiante/simulacros/historial" element={
+  <ProtectedRoute roles={['ESTUDIANTE']}>
+    <SimpleLayout titulo="Historial de simulacros" botonVolver="/estudiante/simulacros">
+      <SimulacroHistorialPage />
+    </SimpleLayout>
+  </ProtectedRoute>
+}/>
+
 <Route path="/estudiante/practica/sesion/:sesionId" element={
   <ProtectedRoute roles={['ESTUDIANTE']}>
     <SimpleLayout titulo="Practica" botonVolver="/estudiante/practica">
@@ -464,5 +491,14 @@ export default function App() {
 }/>
 
     </Routes>
+
+
+
+
+
+
   );
+
+
+  
 }

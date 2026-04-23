@@ -358,6 +358,21 @@ export default function DashboardEstudiantePage() {
               <span className="dash-acceso-flecha">→</span>
             </button>
 
+
+            <button
+                className="dash-acceso"
+                onClick={() => navigate('/estudiante/simulacros')}
+              >
+                <div
+                  className="dash-acceso-icono"
+                  style={{ background: 'rgba(239,68,68,0.15)', color: '#f87171' }}
+                >
+                  S
+                </div>
+                <span className="dash-acceso-label">Simulacros</span>
+                <span className="dash-acceso-flecha">→</span>
+              </button>
+
           </div>
         </div>
 
