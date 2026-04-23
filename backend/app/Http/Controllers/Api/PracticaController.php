@@ -91,6 +91,25 @@ class PracticaController extends Controller
         }
     }
 
+    public function omitir(Request $request, int $sesionId): JsonResponse
+    {
+        $request->validate([
+            'ejercicio_id' => ['required', 'integer'],
+            'tiempo_segundos' => ['nullable', 'integer', 'min:0'],
+        ]);
+
+        try {
+            $data = $this->service->omitirPorTiempo($request->user()->id, $sesionId, $request->all());
+
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+            ]);
+        } catch (\Throwable $e) {
+            return $this->responderError($e);
+        }
+    }
+
     public function finalizar(Request $request, int $sesionId): JsonResponse
     {
         try {
@@ -119,7 +138,7 @@ class PracticaController extends Controller
         }
     }
 
-        public function guardados(Request $request): JsonResponse
+    public function guardados(Request $request): JsonResponse
     {
         try {
             $data = $this->service->guardados($request->user()->id);
@@ -147,9 +166,9 @@ class PracticaController extends Controller
         }
     }
 
-        public function guardarParaDespues(Request $request): JsonResponse
+    public function guardarParaDespues(Request $request): JsonResponse
     {
-                $request->validate([
+        $request->validate([
             'ejercicio_id' => ['required', 'integer'],
             'sesion_id' => ['nullable', 'integer'],
             'tiempo_segundos' => ['nullable', 'integer', 'min:0'],
@@ -168,30 +187,30 @@ class PracticaController extends Controller
     }
 
     public function activa(Request $request): JsonResponse
-{
-    try {
-        $data = $this->service->activa($request->user()->id);
+    {
+        try {
+            $data = $this->service->activa($request->user()->id);
 
-        return response()->json([
-            'success' => true,
-            'data' => $data,
-        ]);
-    } catch (\Throwable $e) {
-        return $this->responderError($e);
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+            ]);
+        } catch (\Throwable $e) {
+            return $this->responderError($e);
+        }
     }
-}
 
-public function historial(Request $request): JsonResponse
-{
-    try {
-        $data = $this->service->historial($request->user()->id);
+    public function historial(Request $request): JsonResponse
+    {
+        try {
+            $data = $this->service->historial($request->user()->id);
 
-        return response()->json([
-            'success' => true,
-            'data' => $data,
-        ]);
-    } catch (\Throwable $e) {
-        return $this->responderError($e);
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+            ]);
+        } catch (\Throwable $e) {
+            return $this->responderError($e);
+        }
     }
-}
 }

@@ -338,6 +338,60 @@
   accent-color: #10b981;
 }
 
+.practica-opcion-texto {
+  flex: 1;
+  min-width: 0;
+  color: rgba(255,255,255,0.88);
+  line-height: 1.7;
+  overflow-x: auto;
+}
+
+.practica-sesion-timer-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.practica-sesion-timer {
+  min-width: 220px;
+  padding: 1rem 1.25rem;
+  border-radius: 16px;
+  border: 1px solid rgba(18, 219, 170, 0.28);
+  background: rgba(7, 40, 34, 0.45);
+  text-align: center;
+}
+
+.practica-sesion-timer span {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(214, 255, 244, 0.78);
+}
+
+.practica-sesion-timer strong {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #b9fff0;
+  line-height: 1;
+}
+
+.practica-sesion-timer-alerta {
+  border-color: rgba(255, 106, 106, 0.32);
+  background: rgba(70, 18, 26, 0.42);
+}
+
+.practica-sesion-timer-alerta strong {
+  color: #ffb3b3;
+}
+
+.practica-opcion-texto .katex-display {
+  margin: 0.35rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 .practica-opcion-activa {
   border-color: rgba(16,185,129,0.35);
   background: rgba(16,185,129,0.08);
@@ -362,6 +416,46 @@
   color: white;
   padding: 0 12px;
   outline: none;
+}
+
+.practica-sesion-timer-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.practica-sesion-timer {
+  min-width: 220px;
+  padding: 1rem 1.25rem;
+  border-radius: 16px;
+  border: 1px solid rgba(18, 219, 170, 0.28);
+  background: rgba(7, 40, 34, 0.45);
+  text-align: center;
+}
+
+.practica-sesion-timer span {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(214, 255, 244, 0.78);
+}
+
+.practica-sesion-timer strong {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #b9fff0;
+  line-height: 1;
+}
+
+.practica-sesion-timer-alerta {
+  border-color: rgba(255, 106, 106, 0.32);
+  background: rgba(70, 18, 26, 0.42);
+}
+
+.practica-sesion-timer-alerta strong {
+  color: #ffb3b3;
 }
 
 .practica-sesion-check {

@@ -37,6 +37,11 @@ export const practicaService = {
     return res.data.data;
   },
 
+  async omitirPorTiempo(sesionId, payload) {
+  const res = await api.post(`/practica/${sesionId}/omitir`, payload);
+  return res.data.data;
+    },
+
     async guardados() {
     const res = await api.get('/practica/guardados');
     return res.data.data;

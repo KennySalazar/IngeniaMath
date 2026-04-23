@@ -320,6 +320,24 @@ class PracticaDAO
         ", [$sesionId, $ejercicioId, $tiempoSegundos]);
     }
 
+    public function omitirPorTiempo(int $sesionId, int $ejercicioId, ?int $tiempoSegundos = null): void
+{
+    DB::statement("
+        INSERT INTO math.respuestas_practica
+            (sesion_practica_id, ejercicio_id, opcion_id, respuesta_texto, es_correcta, marcado_guardado, tiempo_segundos, omitida, fecha_respuesta)
+        VALUES (?, ?, NULL, NULL, false, false, ?, true, NOW())
+        ON CONFLICT (sesion_practica_id, ejercicio_id)
+        DO UPDATE SET
+            opcion_id = NULL,
+            respuesta_texto = NULL,
+            es_correcta = false,
+            marcado_guardado = false,
+            tiempo_segundos = EXCLUDED.tiempo_segundos,
+            omitida = true,
+            fecha_respuesta = NOW()
+    ", [$sesionId, $ejercicioId, $tiempoSegundos]);
+}
+
     public function guardarEjercicio(int $estudianteId, int $ejercicioId): void
     {
         DB::statement("
@@ -332,7 +350,7 @@ class PracticaDAO
         ", [$estudianteId, $ejercicioId]);
     }
 
-    public function actualizarResumenSesion(int $sesionId): void
+   public function actualizarResumenSesion(int $sesionId): void
 {
     DB::update("
         UPDATE math.sesiones_practica sp
@@ -360,10 +378,9 @@ class PracticaDAO
                   AND COALESCE(rp.omitida, false) = false
             ), 0),
             tiempo_total_minutos = COALESCE((
-                SELECT CEIL(COALESCE(SUM(rp.tiempo_segundos), 0) / 60.0)::int
+                SELECT CEIL(COALESCE(SUM(COALESCE(rp.tiempo_segundos, 0)), 0) / 60.0)::int
                 FROM math.respuestas_practica rp
                 WHERE rp.sesion_practica_id = sp.id
-                  AND COALESCE(rp.omitida, false) = false
             ), 0)
         WHERE sp.id = ?
     ", [$sesionId]);
@@ -430,12 +447,7 @@ class PracticaDAO
                 ) AS porcentaje_aciertos,
                 CEIL(
                     COALESCE(
-                        SUM(
-                            CASE
-                                WHEN COALESCE(rp.omitida, false) = false THEN COALESCE(rp.tiempo_segundos, 0)
-                                ELSE 0
-                            END
-                        ),
+                        SUM(COALESCE(rp.tiempo_segundos, 0)),
                         0
                     ) / 60.0
                 )::int AS tiempo_total_minutos

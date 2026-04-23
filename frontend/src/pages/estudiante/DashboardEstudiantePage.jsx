@@ -5,9 +5,9 @@ import './DashboardEstudiantePage.css';
 import { practicaService } from '../../services/practicaService';
 
 const CLASIFICACION = {
-  DOMINADO:      { color: '#10b981', label: 'Dominado'     },
+  DOMINADO:      { color: '#10b981', label: 'Dominado' },
   EN_DESARROLLO: { color: '#f59e0b', label: 'En desarrollo' },
-  DEFICIENTE:    { color: '#ef4444', label: 'Deficiente'    },
+  DEFICIENTE:    { color: '#ef4444', label: 'Deficiente' },
 };
 
 const DIAS = ['', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
@@ -15,43 +15,47 @@ const DIAS = ['', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 export default function DashboardEstudiantePage() {
   const navigate = useNavigate();
 
-  const [estado,   setEstado]   = useState(null);
-  const [ruta,     setRuta]     = useState(null);
-  const [plan,     setPlan]     = useState(null);
+  const [estado, setEstado] = useState(null);
+  const [ruta, setRuta] = useState(null);
+  const [plan, setPlan] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [sesionActiva, setSesionActiva] = useState(null);
   const [resumenPractica, setResumenPractica] = useState(null);
 
   useEffect(() => {
-  Promise.allSettled([
-    diagnosticoService.estado(),
-    diagnosticoService.obtenerRuta(),
-    diagnosticoService.obtenerPlan(),
-    practicaService.activa(),
-  ]).then(([estadoRes, rutaRes, planRes, practicaRes]) => {
-    if (estadoRes.status === 'fulfilled') setEstado(estadoRes.value);
-    if (rutaRes.status === 'fulfilled') setRuta(rutaRes.value);
-    if (planRes.status === 'fulfilled') setPlan(planRes.value);
+    Promise.allSettled([
+      diagnosticoService.estado(),
+      diagnosticoService.obtenerRuta(),
+      diagnosticoService.obtenerPlan(),
+      practicaService.activa(),
+    ]).then(([estadoRes, rutaRes, planRes, practicaRes]) => {
+      if (estadoRes.status === 'fulfilled') setEstado(estadoRes.value);
+      if (rutaRes.status === 'fulfilled') setRuta(rutaRes.value);
+      if (planRes.status === 'fulfilled') setPlan(planRes.value);
 
-    if (practicaRes.status === 'fulfilled' && practicaRes.value?.activa) {
-      setSesionActiva(practicaRes.value.sesion);
-      setResumenPractica(practicaRes.value.resumen);
-    }
-      }).finally(() => setCargando(false));
-    }, []);
+      if (practicaRes.status === 'fulfilled' && practicaRes.value?.activa) {
+        setSesionActiva(practicaRes.value.sesion);
+        setResumenPractica(practicaRes.value.resumen);
+      }
+    }).finally(() => setCargando(false));
+  }, []);
 
-  if (cargando) return (
-    <div className="dash-loading">Cargando tu panel...</div>
-  );
+  if (cargando) {
+    return (
+      <div className="dash-loading">Cargando tu panel...</div>
+    );
+  }
 
-  const hoy        = new Date().getDay(); // 0=domingo, 1=lunes...
-  const diaHoy     = hoy === 0 ? 7 : hoy; // adaptamos al formato 1-7
-  const temaHoy    = plan?.dias?.find(d => d.dia_numero === diaHoy);
+  const hoy = new Date().getDay();
+  const diaHoy = hoy === 0 ? 7 : hoy;
+  const temaHoy = plan?.dias?.find(d => d.dia_numero === diaHoy);
+
+  const irADiagnostico = () => {
+    navigate(estado?.diagnostico_completado ? '/diagnostico/ruta' : '/diagnostico/inicio');
+  };
 
   return (
     <div className="dash-page">
-
-      {/* Saludo */}
       <div className="dash-bienvenida">
         <div>
           <h1 className="dash-titulo">Panel del estudiante</h1>
@@ -62,8 +66,6 @@ export default function DashboardEstudiantePage() {
       </div>
 
       <div className="dash-grid">
-
-        {/* ── Tarjeta diagnóstico ── */}
         <div className="dash-card dash-card-diagnostico">
           <div className="dash-card-header">
             <div className="dash-card-icono dash-icono-diag">D</div>
@@ -113,7 +115,6 @@ export default function DashboardEstudiantePage() {
           )}
         </div>
 
-        {/* ── Tarjeta ruta ── */}
         <div className="dash-card dash-card-ruta">
           <div className="dash-card-header">
             <div className="dash-card-icono dash-icono-ruta">R</div>
@@ -144,7 +145,6 @@ export default function DashboardEstudiantePage() {
                 </div>
               </div>
 
-              {/* Próximo subtema a estudiar */}
               {ruta.modulos[0]?.subtemas[0] && (
                 <div className="dash-proximo">
                   <span className="dash-proximo-label">Siguiente a estudiar</span>
@@ -171,7 +171,6 @@ export default function DashboardEstudiantePage() {
           )}
         </div>
 
-        {/* ── Tarjeta plan semanal ── */}
         <div className="dash-card dash-card-plan dash-card-ancha">
           <div className="dash-card-header">
             <div className="dash-card-icono dash-icono-plan">P</div>
@@ -202,7 +201,6 @@ export default function DashboardEstudiantePage() {
                 </div>
               </div>
 
-              {/* Tema de hoy */}
               {temaHoy && (
                 <div className="dash-tema-hoy">
                   <span className="dash-tema-hoy-label">Tema de hoy</span>
@@ -219,7 +217,6 @@ export default function DashboardEstudiantePage() {
                 </div>
               )}
 
-              {/* Plan de la semana */}
               <div className="dash-semana">
                 {plan.dias.map(dia => {
                   const esHoy = dia.dia_numero === diaHoy;
@@ -305,31 +302,34 @@ export default function DashboardEstudiantePage() {
           )}
         </div>
 
-        {/* ── Accesos rápidos ── */}
         <div className="dash-card dash-card-accesos dash-card-ancha">
           <h2 className="dash-card-titulo" style={{ marginBottom: '1.25rem' }}>
             Accesos rapidos
           </h2>
-          <div className="dash-accesos-grid">
 
+          <div className="dash-accesos-grid">
             <button
-                className="dash-acceso"
-                onClick={() => navigate(sesionActiva ? `/estudiante/practica/sesion/${sesionActiva.id}` : '/estudiante/practica')}
+              className="dash-acceso"
+              onClick={irADiagnostico}
+            >
+              <div
+                className="dash-acceso-icono"
+                style={{ background: 'rgba(99,102,241,0.15)', color: '#818cf8' }}
               >
-                <div className="dash-acceso-icono" style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981' }}>
-                  E
-                </div>
-                <span className="dash-acceso-label">
-                  {sesionActiva ? 'Continuar practica' : 'Practica'}
-                </span>
-                <span className="dash-acceso-flecha">→</span>
-              </button>
+                D
+              </div>
+              <span className="dash-acceso-label">Resultados del diagnostico</span>
+              <span className="dash-acceso-flecha">→</span>
+            </button>
 
             <button
               className="dash-acceso"
               onClick={() => navigate('/diagnostico/ruta')}
             >
-              <div className="dash-acceso-icono" style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981' }}>
+              <div
+                className="dash-acceso-icono"
+                style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981' }}
+              >
                 R
               </div>
               <span className="dash-acceso-label">Mi ruta de aprendizaje</span>
@@ -340,7 +340,10 @@ export default function DashboardEstudiantePage() {
               className="dash-acceso"
               onClick={() => navigate('/diagnostico/ruta')}
             >
-              <div className="dash-acceso-icono" style={{ background: 'rgba(245,158,11,0.15)', color: '#fbbf24' }}>
+              <div
+                className="dash-acceso-icono"
+                style={{ background: 'rgba(245,158,11,0.15)', color: '#fbbf24' }}
+              >
                 P
               </div>
               <span className="dash-acceso-label">Plan semanal</span>
@@ -349,33 +352,35 @@ export default function DashboardEstudiantePage() {
 
             <button
               className="dash-acceso"
-              onClick={() => navigate('/estudiante/practica')}
+              onClick={() => navigate(sesionActiva ? `/estudiante/practica/sesion/${sesionActiva.id}` : '/estudiante/practica')}
             >
-              <div className="dash-acceso-icono" style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981' }}>
+              <div
+                className="dash-acceso-icono"
+                style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981' }}
+              >
                 E
               </div>
-              <span className="dash-acceso-label">Practica</span>
+              <span className="dash-acceso-label">
+                {sesionActiva ? 'Continuar practica' : 'Practica'}
+              </span>
               <span className="dash-acceso-flecha">→</span>
             </button>
 
-
             <button
-                className="dash-acceso"
-                onClick={() => navigate('/estudiante/simulacros')}
+              className="dash-acceso"
+              onClick={() => navigate('/estudiante/simulacros')}
+            >
+              <div
+                className="dash-acceso-icono"
+                style={{ background: 'rgba(239,68,68,0.15)', color: '#f87171' }}
               >
-                <div
-                  className="dash-acceso-icono"
-                  style={{ background: 'rgba(239,68,68,0.15)', color: '#f87171' }}
-                >
-                  S
-                </div>
-                <span className="dash-acceso-label">Simulacros</span>
-                <span className="dash-acceso-flecha">→</span>
-              </button>
-
+                S
+              </div>
+              <span className="dash-acceso-label">Simulacros</span>
+              <span className="dash-acceso-flecha">→</span>
+            </button>
           </div>
         </div>
-
       </div>
     </div>
   );

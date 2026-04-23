@@ -353,6 +353,63 @@ class PracticaService
     ];
 }
 
+public function omitirPorTiempo(int $estudianteId, int $sesionId, array $data): array
+{
+    $ejercicioId = (int) ($data['ejercicio_id'] ?? 0);
+    $tiempoSegundos = isset($data['tiempo_segundos']) ? (int) $data['tiempo_segundos'] : null;
+
+    if (!$ejercicioId) {
+        throw new \Exception('El ejercicio es obligatorio.', 422);
+    }
+
+    $sesionAntes = $this->dao->obtenerSesionPorId($sesionId, $estudianteId);
+
+    if (!$sesionAntes) {
+        throw new \Exception('La sesion no existe.', 404);
+    }
+
+    if ($sesionAntes->fecha_fin !== null) {
+        throw new \Exception('La sesion ya fue finalizada.', 409);
+    }
+
+    $ejercicio = $this->dao->obtenerEjercicioPorId($ejercicioId);
+
+    if (!$ejercicio) {
+        throw new \Exception('El ejercicio no existe o no esta publicado.', 404);
+    }
+
+    $this->dao->omitirPorTiempo($sesionId, $ejercicioId, $tiempoSegundos);
+    $this->dao->actualizarResumenSesion($sesionId);
+
+    $sesionParaBuscar = $this->dao->obtenerSesionPorId($sesionId, $estudianteId);
+    $siguiente = $this->buscarSiguienteEjercicio($estudianteId, $sesionParaBuscar);
+    $sesionDespues = $this->dao->obtenerSesionPorId($sesionId, $estudianteId);
+
+    $avisos = [
+        [
+            'tipo' => 'warning',
+            'mensaje' => 'Tiempo agotado. El ejercicio se registro como omitido.',
+        ],
+    ];
+
+    $avisos = array_merge(
+        $avisos,
+        $this->construirAvisosTransicion($sesionAntes, $sesionDespues, $siguiente)
+    );
+
+    return [
+        'message' => 'Tiempo agotado. El ejercicio se registro como omitido.',
+        'siguiente_ejercicio' => $siguiente,
+        'resumen' => $this->formatearResumen(
+            $this->dao->obtenerResumenSesion($sesionId, $estudianteId)
+        ),
+        'avisos' => $avisos,
+        'sesion' => $this->formatearSesion($sesionDespues),
+    ];
+}
+
+
+
     private function buscarSiguienteEjercicio(int $estudianteId, object $sesion): ?array
     {
         $niveles = $this->nivelesCandidatos((string) $sesion->nivel_dificultad);

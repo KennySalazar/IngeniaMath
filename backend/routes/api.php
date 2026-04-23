@@ -99,17 +99,19 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
         Route::middleware('rol:ESTUDIANTE')->prefix('practica')->group(function () {
-        Route::get('/activa', [PracticaController::class, 'activa']);
-        Route::get('/historial', [PracticaController::class, 'historial']);
-        Route::post('/iniciar', [PracticaController::class, 'iniciar']);
-        Route::post('/guardados', [PracticaController::class, 'guardarParaDespues']);
-        Route::get('/guardados', [PracticaController::class, 'guardados']);
-        Route::delete('/guardados/{ejercicioId}', [PracticaController::class, 'eliminarGuardado']);
-        Route::get('/{sesionId}', [PracticaController::class, 'detalle']);
-        Route::post('/{sesionId}/responder', [PracticaController::class, 'responder']);
-        Route::post('/{sesionId}/finalizar', [PracticaController::class, 'finalizar']);
-        Route::get('/{sesionId}/resumen', [PracticaController::class, 'resumen']);
-    });
+    Route::get('/activa', [PracticaController::class, 'activa']);
+    Route::get('/historial', [PracticaController::class, 'historial']);
+    Route::post('/iniciar', [PracticaController::class, 'iniciar']);
+    Route::post('/guardados', [PracticaController::class, 'guardarParaDespues']);
+    Route::get('/guardados', [PracticaController::class, 'guardados']);
+    Route::delete('/guardados/{ejercicioId}', [PracticaController::class, 'eliminarGuardado']);
+
+    Route::get('/{sesionId}', [PracticaController::class, 'detalle']);
+    Route::post('/{sesionId}/responder', [PracticaController::class, 'responder']);
+    Route::post('/{sesionId}/omitir', [PracticaController::class, 'omitir']);
+    Route::post('/{sesionId}/finalizar', [PracticaController::class, 'finalizar']);
+    Route::get('/{sesionId}/resumen', [PracticaController::class, 'resumen']);
+});
 
         Route::middleware('rol:ESTUDIANTE')->prefix('simulacros')->group(function () {
         Route::get('/configuracion', [SimulacroController::class, 'configuracion']);
