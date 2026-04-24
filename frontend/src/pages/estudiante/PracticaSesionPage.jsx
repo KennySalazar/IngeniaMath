@@ -21,31 +21,38 @@ export default function PracticaSesionPage() {
   const [guardando, setGuardando] = useState(false);
   const [mensajeExito, setMensajeExito] = useState('');
   const [avisosSistema, setAvisosSistema] = useState([]);
-  const [tiempoRestante, setTiempoRestante] = useState(0);
+  const [tiempoRestante, setTiempoRestante] = useState(null);
   const [tiempoSesionSegundos, setTiempoSesionSegundos] = useState(0);
   const [procesandoTiempoAgotado, setProcesandoTiempoAgotado] = useState(false);
+  const [timerEjercicioId, setTimerEjercicioId] = useState(null);
+  
 
   useEffect(() => {
     cargarDetalle();
-  }, [sesionId]);
+        }, [sesionId]);
 
-  useEffect(() => {
-    if (data?.ejercicio_actual?.id) {
-      const minutos = Number(data.ejercicio_actual.tiempo_estimado_minutos || 0);
+        useEffect(() => {
+        const ejercicioId = data?.ejercicio_actual?.id;
 
-      setOpcionId(null);
-      setRespuestaTexto('');
-      setResultado(null);
-      setProximoEjercicio(null);
-      setTiempoInicio(Date.now());
-      setMensajeExito('');
-      setTiempoRestante(Math.max(0, minutos * 60));
-      setProcesandoTiempoAgotado(false);
-    } else {
-      setTiempoRestante(0);
-      setProcesandoTiempoAgotado(false);
-    }
-  }, [data?.ejercicio_actual?.id]);
+        if (ejercicioId) {
+            const minutosRaw = Number(data.ejercicio_actual.tiempo_estimado_minutos);
+            const minutos = Number.isFinite(minutosRaw) && minutosRaw > 0 ? minutosRaw : 2;
+
+            setOpcionId(null);
+            setRespuestaTexto('');
+            setResultado(null);
+            setProximoEjercicio(null);
+            setTiempoInicio(Date.now());
+            setMensajeExito('');
+            setProcesandoTiempoAgotado(false);
+            setTiempoRestante(Math.max(1, Math.round(minutos * 60)));
+            setTimerEjercicioId(ejercicioId);
+        } else {
+            setTiempoRestante(null);
+            setProcesandoTiempoAgotado(false);
+            setTimerEjercicioId(null);
+        }
+        }, [data?.ejercicio_actual?.id]);
 
   useEffect(() => {
     if (!data?.sesion?.fecha_fin && data?.sesion?.fecha_inicio) {
@@ -68,42 +75,58 @@ export default function PracticaSesionPage() {
     }
   }, [data?.sesion?.fecha_inicio, data?.sesion?.fecha_fin, data?.resumen?.tiempo_total_minutos]);
 
-  useEffect(() => {
-    if (!data?.ejercicio_actual?.id || resultado || data?.sesion?.fecha_fin) {
-      return;
+    
+    useEffect(() => {
+    if (
+        !data?.ejercicio_actual?.id ||
+        timerEjercicioId !== data.ejercicio_actual.id ||
+        tiempoRestante === null ||
+        resultado ||
+        data?.sesion?.fecha_fin
+    ) {
+        return;
     }
 
     const intervalo = setInterval(() => {
-      setTiempoRestante(prev => {
+        setTiempoRestante(prev => {
+        if (prev === null) {
+            return null;
+        }
+
         if (prev <= 1) {
-          clearInterval(intervalo);
-          return 0;
+            clearInterval(intervalo);
+            return 0;
         }
 
         return prev - 1;
-      });
+        });
     }, 1000);
 
     return () => clearInterval(intervalo);
-  }, [data?.ejercicio_actual?.id, resultado, data?.sesion?.fecha_fin]);
+    }, [data?.ejercicio_actual?.id, timerEjercicioId, tiempoRestante, resultado, data?.sesion?.fecha_fin]);
 
-  useEffect(() => {
+ 
+
+    useEffect(() => {
     if (
-      !data?.ejercicio_actual?.id ||
-      data?.sesion?.fecha_fin ||
-      resultado ||
-      enviando ||
-      guardando ||
-      finalizando ||
-      procesandoTiempoAgotado ||
-      tiempoRestante > 0
+        !data?.ejercicio_actual?.id ||
+        timerEjercicioId !== data.ejercicio_actual.id ||
+        tiempoRestante === null ||
+        data?.sesion?.fecha_fin ||
+        resultado ||
+        enviando ||
+        guardando ||
+        finalizando ||
+        procesandoTiempoAgotado ||
+        tiempoRestante > 0
     ) {
-      return;
+        return;
     }
 
     omitirPorTiempo();
-  }, [
+    }, [
     tiempoRestante,
+    timerEjercicioId,
     data?.ejercicio_actual?.id,
     data?.sesion?.fecha_fin,
     resultado,
@@ -111,7 +134,7 @@ export default function PracticaSesionPage() {
     guardando,
     finalizando,
     procesandoTiempoAgotado,
-  ]);
+    ]);
 
   async function cargarDetalle() {
     try {

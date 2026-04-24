@@ -61,7 +61,7 @@ class PracticaService
             $moduloId = (int) $objetivo->modulo_id;
             $subtemaId = (int) $objetivo->subtema_id;
             $rutaId = (int) $ruta->id;
-            $nivel = $this->recalcularNivel($estudianteId, $subtemaId, 'BASICO');
+            $nivel = 'BASICO';
         }
 
         $sesionId = $this->dao->crearSesion(
@@ -127,108 +127,114 @@ class PracticaService
     }
 
     public function responder(int $estudianteId, int $sesionId, array $data): array
-{
-    $sesionAntes = $this->dao->obtenerSesionPorId($sesionId, $estudianteId);
+    {
+        $sesionAntes = $this->dao->obtenerSesionPorId($sesionId, $estudianteId);
 
-    if (!$sesionAntes) {
-        throw new \Exception('La sesion no existe.', 404);
-    }
+        if (!$sesionAntes) {
+            throw new \Exception('La sesion no existe.', 404);
+        }
 
-    if ($sesionAntes->fecha_fin !== null) {
-        throw new \Exception('La sesion ya fue finalizada.', 409);
-    }
+        if ($sesionAntes->fecha_fin !== null) {
+            throw new \Exception('La sesion ya fue finalizada.', 409);
+        }
 
-    $ejercicioId = (int) ($data['ejercicio_id'] ?? 0);
-    $opcionId = isset($data['opcion_id']) ? (int) $data['opcion_id'] : null;
-    $respuestaTexto = isset($data['respuesta_texto']) ? trim((string) $data['respuesta_texto']) : null;
-    $marcadoGuardado = (bool) ($data['marcado_guardado'] ?? false);
-    $tiempoSegundos = isset($data['tiempo_segundos']) ? (int) $data['tiempo_segundos'] : null;
+        $ejercicioId = (int) ($data['ejercicio_id'] ?? 0);
+        $opcionId = isset($data['opcion_id']) ? (int) $data['opcion_id'] : null;
+        $respuestaTexto = isset($data['respuesta_texto']) ? trim((string) $data['respuesta_texto']) : null;
+        $marcadoGuardado = (bool) ($data['marcado_guardado'] ?? false);
+        $tiempoSegundos = isset($data['tiempo_segundos']) ? (int) $data['tiempo_segundos'] : null;
 
-    if (!$ejercicioId) {
-        throw new \Exception('El ejercicio es obligatorio.', 422);
-    }
+        if (!$ejercicioId) {
+            throw new \Exception('El ejercicio es obligatorio.', 422);
+        }
 
-    $ejercicio = $this->dao->obtenerEjercicioPorId($ejercicioId);
+        $ejercicio = $this->dao->obtenerEjercicioPorId($ejercicioId);
 
-    if (!$ejercicio) {
-        throw new \Exception('El ejercicio no existe o no esta publicado.', 404);
-    }
+        if (!$ejercicio) {
+            throw new \Exception('El ejercicio no existe o no esta publicado.', 404);
+        }
 
-    [$esCorrecta, $respuestaNormalizada] = $this->evaluarRespuesta(
-        $ejercicio,
-        $opcionId,
-        $respuestaTexto
-    );
-
-    $this->dao->guardarRespuesta(
-        $sesionId,
-        $ejercicioId,
-        $opcionId,
-        $respuestaNormalizada,
-        $esCorrecta,
-        $marcadoGuardado,
-        $tiempoSegundos
-    );
-
-    if ($marcadoGuardado) {
-        $this->dao->guardarEjercicio($estudianteId, $ejercicioId);
-    }
-
-    $this->dao->actualizarResumenSesion($sesionId);
-
-    $avisos = [];
-
-    if ($sesionAntes->modo === 'GUIADA' && $sesionAntes->subtema_id) {
-        $nivelRecalculado = $this->recalcularNivel(
-            $estudianteId,
-            (int) $sesionAntes->subtema_id,
-            (string) $sesionAntes->nivel_dificultad
+        [$esCorrecta, $respuestaNormalizada] = $this->evaluarRespuesta(
+            $ejercicio,
+            $opcionId,
+            $respuestaTexto
         );
 
-        if ($nivelRecalculado !== $sesionAntes->nivel_dificultad) {
-            $this->dao->actualizarObjetivoSesion(
-                $sesionId,
-                $sesionAntes->modulo_id ? (int) $sesionAntes->modulo_id : null,
-                $sesionAntes->subtema_id ? (int) $sesionAntes->subtema_id : null,
-                $nivelRecalculado
-            );
+        $this->dao->guardarRespuesta(
+            $sesionId,
+            $ejercicioId,
+            $opcionId,
+            $respuestaNormalizada,
+            $esCorrecta,
+            $marcadoGuardado,
+            $tiempoSegundos
+        );
 
-            $avisos = array_merge(
-                $avisos,
-                $this->construirAvisoCambioNivel(
-                    (string) $sesionAntes->nivel_dificultad,
-                    (string) $nivelRecalculado
-                )
-            );
+        if ($marcadoGuardado) {
+            $this->dao->guardarEjercicio($estudianteId, $ejercicioId);
         }
 
-        if ($sesionAntes->ruta_id && $this->debeCompletarSubtema($estudianteId, (int) $sesionAntes->subtema_id)) {
-            $this->dao->marcarSubtemaCompletado((int) $sesionAntes->ruta_id, (int) $sesionAntes->subtema_id);
+        $this->dao->actualizarResumenSesion($sesionId);
+
+        $avisos = [];
+        $sesionActual = $this->dao->obtenerSesionPorId($sesionId, $estudianteId);
+
+        if ($sesionAntes->subtema_id) {
+            $nivelBase = $sesionAntes->nivel_dificultad ?: 'BASICO';
+
+                $nivelRecalculado = $this->recalcularNivel(
+                    $sesionId,
+                    (int) $sesionAntes->subtema_id,
+                    $nivelBase,
+                    $esCorrecta
+                );
+
+            if ($nivelRecalculado !== $sesionActual->nivel_dificultad) {
+                $this->dao->actualizarObjetivoSesion(
+                    $sesionId,
+                    $sesionActual->modulo_id ? (int) $sesionActual->modulo_id : null,
+                    $sesionActual->subtema_id ? (int) $sesionActual->subtema_id : null,
+                    $nivelRecalculado
+                );
+
+                $avisos = array_merge(
+                    $avisos,
+                    $this->construirAvisoCambioNivel(
+                        (string) $sesionActual->nivel_dificultad,
+                        (string) $nivelRecalculado
+                    )
+                );
+            }
+
+            if ($sesionActual->ruta_id && $this->debeCompletarSubtema($estudianteId, (int) $sesionActual->subtema_id)) {
+                $this->dao->marcarSubtemaCompletado((int) $sesionActual->ruta_id, (int) $sesionActual->subtema_id);
+            }
         }
+
+        $sesionParaBuscar = $this->dao->obtenerSesionPorId($sesionId, $estudianteId);
+        $siguiente = $this->buscarSiguienteEjercicio($estudianteId, $sesionParaBuscar);
+        $sesionDespues = $this->dao->obtenerSesionPorId($sesionId, $estudianteId);
+
+        $avisos = array_merge(
+            $avisos,
+            $this->construirAvisosTransicion($sesionAntes, $sesionDespues, $siguiente)
+        );
+
+        return [
+            'es_correcta' => $esCorrecta,
+            'mensaje' => $esCorrecta ? 'Respuesta correcta.' : 'Respuesta incorrecta.',
+            'solucion_paso_a_paso' => $ejercicio->solucion_paso_a_paso,
+            'explicacion_conceptual' => $ejercicio->explicacion_conceptual,
+            'nivel_actual' => $sesionDespues->nivel_dificultad,
+            'siguiente_ejercicio' => $siguiente,
+            'resumen' => $this->formatearResumen(
+                $this->dao->obtenerResumenSesion($sesionId, $estudianteId)
+            ),
+            'avisos' => $avisos,
+        ];
     }
 
-    $sesionParaBuscar = $this->dao->obtenerSesionPorId($sesionId, $estudianteId);
-    $siguiente = $this->buscarSiguienteEjercicio($estudianteId, $sesionParaBuscar);
-    $sesionDespues = $this->dao->obtenerSesionPorId($sesionId, $estudianteId);
 
-    $avisos = array_merge(
-        $avisos,
-        $this->construirAvisosTransicion($sesionAntes, $sesionDespues, $siguiente)
-    );
-
-    return [
-        'es_correcta' => $esCorrecta,
-        'mensaje' => $esCorrecta ? 'Respuesta correcta.' : 'Respuesta incorrecta.',
-        'solucion_paso_a_paso' => $ejercicio->solucion_paso_a_paso,
-        'explicacion_conceptual' => $ejercicio->explicacion_conceptual,
-        'nivel_actual' => $sesionDespues->nivel_dificultad,
-        'siguiente_ejercicio' => $siguiente,
-        'resumen' => $this->formatearResumen(
-            $this->dao->obtenerResumenSesion($sesionId, $estudianteId)
-        ),
-        'avisos' => $avisos,
-    ];
-}
     public function finalizar(int $estudianteId, int $sesionId): array
     {
         $sesion = $this->dao->obtenerSesionPorId($sesionId, $estudianteId);
@@ -412,7 +418,7 @@ public function omitirPorTiempo(int $estudianteId, int $sesionId, array $data): 
 
     private function buscarSiguienteEjercicio(int $estudianteId, object $sesion): ?array
     {
-        $niveles = $this->nivelesCandidatos((string) $sesion->nivel_dificultad);
+        $niveles = $this->nivelesCandidatos((string) ($sesion->nivel_dificultad ?: 'BASICO'));
 
         foreach ($niveles as $nivel) {
             $ejercicio = $this->dao->buscarEjercicioDisponible(
@@ -424,15 +430,6 @@ public function omitirPorTiempo(int $estudianteId, int $sesionId, array $data): 
             );
 
             if ($ejercicio) {
-                if ($nivel !== $sesion->nivel_dificultad) {
-                    $this->dao->actualizarObjetivoSesion(
-                        (int) $sesion->id,
-                        $sesion->modulo_id ? (int) $sesion->modulo_id : null,
-                        $sesion->subtema_id ? (int) $sesion->subtema_id : null,
-                        $nivel
-                    );
-                }
-
                 return $this->formatearEjercicio($ejercicio);
             }
         }
@@ -445,36 +442,26 @@ public function omitirPorTiempo(int $estudianteId, int $sesionId, array $data): 
             );
 
             if ($nuevoObjetivo) {
-                $nivel = $this->recalcularNivel($estudianteId, (int) $nuevoObjetivo->subtema_id, 'BASICO');
-
                 $this->dao->actualizarObjetivoSesion(
                     (int) $sesion->id,
                     (int) $nuevoObjetivo->modulo_id,
                     (int) $nuevoObjetivo->subtema_id,
-                    $nivel
+                    (string) ($sesion->nivel_dificultad ?: 'BASICO')
                 );
 
                 $sesion = $this->dao->obtenerSesionPorId((int) $sesion->id, $estudianteId);
+                $niveles = $this->nivelesCandidatos((string) ($sesion->nivel_dificultad ?: 'BASICO'));
 
-                foreach ($this->nivelesCandidatos((string) $sesion->nivel_dificultad) as $nivelCandidato) {
+                foreach ($niveles as $nivel) {
                     $ejercicio = $this->dao->buscarEjercicioDisponible(
                         $estudianteId,
                         (int) $sesion->id,
                         (int) $sesion->modulo_id,
                         $sesion->subtema_id ? (int) $sesion->subtema_id : null,
-                        $nivelCandidato
+                        $nivel
                     );
 
                     if ($ejercicio) {
-                        if ($nivelCandidato !== $sesion->nivel_dificultad) {
-                            $this->dao->actualizarObjetivoSesion(
-                                (int) $sesion->id,
-                                $sesion->modulo_id ? (int) $sesion->modulo_id : null,
-                                $sesion->subtema_id ? (int) $sesion->subtema_id : null,
-                                $nivelCandidato
-                            );
-                        }
-
                         return $this->formatearEjercicio($ejercicio);
                     }
                 }
@@ -586,32 +573,56 @@ private function normalizarVerdaderoFalso(string $texto): string
     return $valor;
 }
 
-    private function recalcularNivel(int $estudianteId, int $subtemaId, string $nivelActual): string
-    {
-        $metricas = $this->dao->obtenerRendimientoNivelSubtema($estudianteId, $subtemaId, $nivelActual);
-        $historial = $this->dao->obtenerHistorialRespuestasSubtema($estudianteId, $subtemaId, $nivelActual, 3);
+   private function recalcularNivel(int $sesionId, int $subtemaId, ?string $nivelActual, bool $respuestaActualCorrecta): string
+{
+    $nivelActual = $nivelActual ?: 'BASICO';
 
-        if (count($historial) >= 3) {
-            $tresCorrectas = true;
+    $historial = $this->dao->obtenerUltimasRespuestasSesionSubtema(
+        $sesionId,
+        $subtemaId,
+        20
+    );
 
-            foreach ($historial as $item) {
-                if (!$item->es_correcta) {
-                    $tresCorrectas = false;
-                    break;
-                }
-            }
+    if ($respuestaActualCorrecta) {
+        $rachaCorrectas = 0;
 
-            if ($tresCorrectas) {
-                return $this->subirNivel($nivelActual);
+        foreach ($historial as $item) {
+            if ($this->valorBooleano($item->es_correcta)) {
+                $rachaCorrectas++;
+            } else {
+                break;
             }
         }
 
-        if ((int) $metricas->total >= 3 && (float) $metricas->porcentaje_error > 60) {
-            return $this->bajarNivel($nivelActual);
+        if ($rachaCorrectas >= 3 && $rachaCorrectas % 3 === 0) {
+            return $this->subirNivel($nivelActual);
         }
 
         return $nivelActual;
     }
+
+    $ultimasCinco = array_slice($historial, 0, 5);
+
+    if (count($ultimasCinco) < 3) {
+        return $nivelActual;
+    }
+
+    $incorrectas = 0;
+
+    foreach ($ultimasCinco as $item) {
+        if (!$this->valorBooleano($item->es_correcta)) {
+            $incorrectas++;
+        }
+    }
+
+    $porcentajeError = ($incorrectas * 100) / count($ultimasCinco);
+
+    if ($porcentajeError > 60) {
+        return $this->bajarNivel($nivelActual);
+    }
+
+    return $nivelActual;
+}
 
     private function debeCompletarSubtema(int $estudianteId, int $subtemaId): bool
     {
@@ -622,7 +633,7 @@ private function normalizarVerdaderoFalso(string $texto): string
         }
 
         foreach ($historial as $item) {
-            if (!$item->es_correcta) {
+            if (!$this->valorBooleano($item->es_correcta)) {
                 return false;
             }
         }
@@ -653,30 +664,19 @@ private function normalizarVerdaderoFalso(string $texto): string
     }
 
     private function nivelesCandidatos(string $nivelActual): array
+{
+    return match ($nivelActual) {
+        'BASICO' => ['BASICO', 'INTERMEDIO', 'AVANZADO', 'EXAMEN_REAL'],
+        'INTERMEDIO' => ['INTERMEDIO', 'AVANZADO', 'EXAMEN_REAL'],
+        'AVANZADO' => ['AVANZADO', 'EXAMEN_REAL'],
+        'EXAMEN_REAL' => ['EXAMEN_REAL'],
+        default => ['BASICO', 'INTERMEDIO', 'AVANZADO', 'EXAMEN_REAL'],
+    };
+}
+
+    private function valorBooleano(mixed $valor): bool
     {
-        $indice = array_search($nivelActual, self::NIVELES, true);
-
-        if ($indice === false) {
-            return self::NIVELES;
-        }
-
-        $orden = [$nivelActual];
-
-        if ($indice > 0) {
-            $orden[] = self::NIVELES[$indice - 1];
-        }
-
-        if ($indice < count(self::NIVELES) - 1) {
-            $orden[] = self::NIVELES[$indice + 1];
-        }
-
-        foreach (self::NIVELES as $nivel) {
-            if (!in_array($nivel, $orden, true)) {
-                $orden[] = $nivel;
-            }
-        }
-
-        return $orden;
+        return in_array($valor, [true, 1, '1', 't', 'true', 'TRUE'], true);
     }
 
     private function normalizarTexto(string $texto): string

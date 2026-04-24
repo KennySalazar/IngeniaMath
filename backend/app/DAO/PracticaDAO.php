@@ -164,62 +164,62 @@ class PracticaDAO
         return DB::selectOne($sql, $params);
     }
 
-    public function buscarEjercicioDisponible(
-        int $estudianteId,
-        int $sesionId,
-        int $moduloId,
-        ?int $subtemaId,
-        string $nivelDificultad
-    ): ?object {
-        $sql = "
-            SELECT
-                e.id,
-                e.modulo_id,
-                e.subtema_id,
-                e.nivel_dificultad,
-                e.tipo_ejercicio,
-                e.enunciado,
-                e.imagen_apoyo_url,
-                e.respuesta_correcta_texto,
-                e.solucion_paso_a_paso,
-                e.explicacion_conceptual,
-                e.tiempo_estimado_minutos,
-                m.nombre AS modulo_nombre,
-                s.nombre AS subtema_nombre
-            FROM math.ejercicios e
-            JOIN math.modulos_tematicos m ON m.id = e.modulo_id
-            LEFT JOIN math.subtemas s ON s.id = e.subtema_id
-            WHERE e.estado = 'PUBLICADO'
-              AND e.modulo_id = ?
-              AND e.nivel_dificultad = ?
-              AND NOT EXISTS (
-                  SELECT 1
-                  FROM math.respuestas_practica rp0
-                  WHERE rp0.sesion_practica_id = ?
-                    AND rp0.ejercicio_id = e.id
-              )
-              AND NOT EXISTS (
-                  SELECT 1
-                  FROM math.respuestas_practica rp
-                  JOIN math.sesiones_practica sp ON sp.id = rp.sesion_practica_id
-                  WHERE sp.estudiante_id = ?
-                    AND rp.ejercicio_id = e.id
-                    AND rp.es_correcta = true
-                    AND rp.fecha_respuesta >= NOW() - INTERVAL '7 days'
-              )
-        ";
+   public function buscarEjercicioDisponible(
+    int $estudianteId,
+    int $sesionId,
+    int $moduloId,
+    ?int $subtemaId,
+    string $nivelDificultad
+): ?object {
+    $sql = "
+        SELECT
+            e.id,
+            e.modulo_id,
+            e.subtema_id,
+            e.nivel_dificultad,
+            e.tipo_ejercicio,
+            e.enunciado,
+            e.imagen_apoyo_url,
+            e.respuesta_correcta_texto,
+            e.solucion_paso_a_paso,
+            e.explicacion_conceptual,
+            e.tiempo_estimado_minutos,
+            m.nombre AS modulo_nombre,
+            s.nombre AS subtema_nombre
+        FROM math.ejercicios e
+        JOIN math.modulos_tematicos m ON m.id = e.modulo_id
+        LEFT JOIN math.subtemas s ON s.id = e.subtema_id
+        WHERE e.estado = 'PUBLICADO'
+          AND e.modulo_id = ?
+          AND e.nivel_dificultad = ?
+          AND NOT EXISTS (
+              SELECT 1
+              FROM math.respuestas_practica rp0
+              WHERE rp0.sesion_practica_id = ?
+                AND rp0.ejercicio_id = e.id
+          )
+          AND NOT EXISTS (
+              SELECT 1
+              FROM math.respuestas_practica rp
+              JOIN math.sesiones_practica sp ON sp.id = rp.sesion_practica_id
+              WHERE sp.estudiante_id = ?
+                AND rp.ejercicio_id = e.id
+                AND rp.es_correcta = true
+                AND rp.fecha_respuesta >= NOW() - INTERVAL '7 days'
+          )
+    ";
 
-        $params = [$moduloId, $nivelDificultad, $sesionId, $estudianteId];
+    $params = [$moduloId, $nivelDificultad, $sesionId, $estudianteId];
 
-        if ($subtemaId !== null) {
-            $sql .= " AND e.subtema_id = ? ";
-            $params[] = $subtemaId;
-        }
-
-        $sql .= " ORDER BY RANDOM() LIMIT 1 ";
-
-        return DB::selectOne($sql, $params);
+    if ($subtemaId !== null) {
+        $sql .= " AND e.subtema_id = ? ";
+        $params[] = $subtemaId;
     }
+
+    $sql .= " ORDER BY RANDOM() LIMIT 1 ";
+
+    return DB::selectOne($sql, $params);
+}
 
     public function obtenerOpciones(int $ejercicioId): array
     {
@@ -227,7 +227,7 @@ class PracticaDAO
             SELECT id, orden_opcion, texto_opcion
             FROM math.opciones_ejercicio
             WHERE ejercicio_id = ?
-            ORDER BY orden_opcion
+            ORDER BY RANDOM()
         ", [$ejercicioId]);
     }
 
@@ -483,7 +483,7 @@ class PracticaDAO
             JOIN math.ejercicios e ON e.id = rp.ejercicio_id
             WHERE sp.estudiante_id = ?
             AND e.subtema_id = ?
-            AND sp.nivel_dificultad = ?
+            AND e.nivel_dificultad = ?
             AND COALESCE(rp.omitida, false) = false
         ", [$estudianteId, $subtemaId, $nivelDificultad]);
     }
@@ -507,14 +507,31 @@ class PracticaDAO
         $params = [$estudianteId, $subtemaId];
 
         if ($nivelDificultad !== null) {
-            $sql .= " AND sp.nivel_dificultad = ? ";
+            $sql .= " AND e.nivel_dificultad = ? ";
             $params[] = $nivelDificultad;
         }
 
-        $sql .= " ORDER BY rp.fecha_respuesta DESC LIMIT " . (int) $limite;
+        $sql .= " ORDER BY rp.fecha_respuesta DESC, rp.id DESC LIMIT " . (int) $limite;
 
         return DB::select($sql, $params);
     }
+
+    public function obtenerUltimasRespuestasSesionSubtema(int $sesionId, int $subtemaId, int $limite = 20): array
+{
+    return DB::select("
+        SELECT rp.es_correcta
+        FROM math.respuestas_practica rp
+        INNER JOIN math.ejercicios e ON e.id = rp.ejercicio_id
+        WHERE rp.sesion_practica_id = ?
+          AND e.subtema_id = ?
+        ORDER BY rp.id DESC
+        LIMIT ?
+    ", [
+        $sesionId,
+        $subtemaId,
+        $limite
+    ]);
+}
 
     public function marcarSubtemaCompletado(int $rutaId, int $subtemaId): void
     {
