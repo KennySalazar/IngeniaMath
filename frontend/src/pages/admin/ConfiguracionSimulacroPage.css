@@ -1,0 +1,189 @@
+.config-simulacro-loading {
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.5);
+  font-family: 'DM Sans', sans-serif;
+}
+
+.config-simulacro-page {
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.config-simulacro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.config-simulacro-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.config-simulacro-card h2 {
+  margin: 0;
+  color: white;
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+}
+
+.config-simulacro-card p,
+.config-simulacro-muted {
+  margin: 8px 0 0;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.config-simulacro-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.config-simulacro-field label {
+  color: rgba(255,255,255,0.72);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.config-simulacro-field input {
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  color: white;
+  padding: 0 12px;
+  outline: none;
+}
+
+.config-simulacro-field input:focus {
+  border-color: rgba(239,68,68,0.55);
+}
+
+.config-simulacro-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.config-simulacro-btn {
+  height: 42px;
+  border-radius: 10px;
+  padding: 0 16px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.config-simulacro-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.config-simulacro-btn-primario {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: white;
+}
+
+.config-simulacro-btn-secundario {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.78);
+}
+
+.config-simulacro-error,
+.config-simulacro-success {
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.config-simulacro-error {
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.25);
+  color: #fca5a5;
+}
+
+.config-simulacro-success {
+  background: rgba(16,185,129,0.1);
+  border: 1px solid rgba(16,185,129,0.25);
+  color: #86efac;
+}
+
+.config-simulacro-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.config-simulacro-stats div {
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.config-simulacro-stats span {
+  color: rgba(255,255,255,0.42);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.config-simulacro-stats strong {
+  color: white;
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+}
+
+.config-simulacro-distribucion {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.config-simulacro-distribucion h3 {
+  margin: 0;
+  color: white;
+  font-size: 15px;
+}
+
+.config-simulacro-distribucion-item {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: rgba(255,255,255,0.82);
+}
+
+.config-simulacro-distribucion-item strong {
+  color: #fca5a5;
+}
+
+@media (max-width: 900px) {
+  .config-simulacro-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .config-simulacro-stats {
+    grid-template-columns: 1fr;
+  }
+}

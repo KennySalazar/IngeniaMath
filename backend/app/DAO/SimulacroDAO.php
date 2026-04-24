@@ -339,6 +339,53 @@ class SimulacroDAO
         ", [$simulacroId]);
     }
 
+
+    public function crearNuevaConfiguracionActiva(
+        string $nombre,
+        int $duracionMinutos,
+        int $cantidadPreguntas,
+        float $puntajeMinimoAprobacion,
+        int $creadoPor,
+        array $distribucion
+    ): int {
+        return DB::transaction(function () use (
+            $nombre,
+            $duracionMinutos,
+            $cantidadPreguntas,
+            $puntajeMinimoAprobacion,
+            $creadoPor,
+            $distribucion
+        ) {
+            DB::update("
+                UPDATE math.configuraciones_simulacro
+                SET activa = false
+                WHERE activa = true
+            ");
+
+            $config = DB::selectOne("
+                INSERT INTO math.configuraciones_simulacro
+                    (nombre, duracion_minutos, cantidad_preguntas, puntaje_minimo_aprobacion, activa, creado_por)
+                VALUES (?, ?, ?, ?, true, ?)
+                RETURNING id
+            ", [$nombre, $duracionMinutos, $cantidadPreguntas, $puntajeMinimoAprobacion, $creadoPor]);
+
+            $configuracionId = (int) $config->id;
+
+            foreach ($distribucion as $fila) {
+                DB::statement("
+                    INSERT INTO math.configuracion_simulacro_modulo
+                        (configuracion_simulacro_id, modulo_id, cantidad_preguntas)
+                    VALUES (?, ?, ?)
+                ", [
+                    $configuracionId,
+                    (int) $fila->modulo_id,
+                    (int) $fila->cantidad_preguntas,
+                ]);
+            }
+
+            return $configuracionId;
+        });
+    }
     public function obtenerHistorialSimulacros(int $estudianteId): array
     {
         return DB::select("
@@ -386,24 +433,4 @@ class SimulacroDAO
     ", [$estudianteId]);
 }
 
-    public function historial(int $estudianteId): array
-{
-    $items = [];
-
-    foreach ($this->dao->obtenerHistorialSimulacros($estudianteId) as $item) {
-        $items[] = $this->formatearHistorial($item);
-    }
-
-    $insights = $this->calcularInsightsModulos($estudianteId);
-
-    return [
-        'items' => $items,
-        'total' => count($items),
-        'insights' => $insights,
-    ];
-}
-
-
-
-    
 }

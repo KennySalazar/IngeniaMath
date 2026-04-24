@@ -49,6 +49,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/usuarios/{id}/rol',    [UsuarioController::class, 'cambiarRol']);
         Route::delete('/usuarios/{id}',       [UsuarioController::class, 'destroy']);
         Route::get('/usuarios-resumen',       [UsuarioController::class, 'resumen']);
+        Route::get('/admin/simulacros/configuracion', [SimulacroController::class, 'configuracion']);
+        Route::put('/admin/simulacros/configuracion', [SimulacroController::class, 'actualizarConfiguracion']);
     });
 
     // Selectores públicos para formularios — cualquier rol autenticado

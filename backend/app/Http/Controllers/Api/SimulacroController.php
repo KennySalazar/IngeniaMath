@@ -137,4 +137,25 @@ class SimulacroController extends Controller
         return $this->responderError($e);
     }
 }
+
+    public function actualizarConfiguracion(Request $request): JsonResponse
+    {
+        $request->validate([
+            'nombre' => ['required', 'string', 'max:100'],
+            'duracion_minutos' => ['required', 'integer', 'min:1', 'max:240'],
+            'puntaje_minimo_aprobacion' => ['required', 'numeric', 'min:0', 'max:100'],
+        ]);
+
+        try {
+            $data = $this->service->actualizarConfiguracion($request->user()->id, $request->all());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Configuracion actualizada correctamente.',
+                'data' => $data,
+            ]);
+        } catch (\Throwable $e) {
+            return $this->responderError($e);
+        }
+    }
 }

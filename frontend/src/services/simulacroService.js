@@ -11,6 +11,16 @@ export const simulacroService = {
     return res.data.data;
   },
 
+  async obtenerConfiguracionAdmin() {
+    const res = await api.get('/admin/simulacros/configuracion');
+    return res.data.data;
+  },
+
+  async actualizarConfiguracion(payload) {
+    const res = await api.put('/admin/simulacros/configuracion', payload);
+    return res.data.data;
+  },
+
   async iniciar() {
     const res = await api.post('/simulacros/iniciar');
     return res.data.data;

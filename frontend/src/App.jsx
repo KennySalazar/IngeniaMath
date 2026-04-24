@@ -26,6 +26,7 @@ import PracticaHistorialPage from './pages/estudiante/PracticaHistorialPage';
 import SimulacrosInicioPage from './pages/estudiante/SimulacrosInicioPage';
 import SimulacroSesionPage from './pages/estudiante/SimulacroSesionPage';
 import SimulacroHistorialPage from './pages/estudiante/SimulacroHistorialPage';
+import ConfiguracionSimulacroPage from './pages/admin/ConfiguracionSimulacroPage';
 
 // ── Navbar ───────────────────────────────────────────────────────────────────
 function Navbar() {
@@ -148,6 +149,7 @@ function AdminTabs() {
   const TABS = [
     { path: '/admin/dashboard', label: 'Usuarios'           },
     { path: '/admin/banco',     label: 'Banco de ejercicios'},
+    { path: '/admin/simulacros-configuracion', label: 'Simulacros'},
     { path: '/revisor/revision',label: 'Revisión'           },
     { path: '/tutor/ejercicios',label: 'Ejercicios'         },
     { path: '/perfil',          label: 'Mi perfil'          },
@@ -382,6 +384,11 @@ export default function App() {
           <AdminLayout titulo="Banco de Ejercicios"><BancoEjerciciosPage /></AdminLayout>
         </ProtectedRoute>
       }/>
+      <Route path="/admin/simulacros-configuracion" element={
+        <ProtectedRoute roles={['ADMIN']}>
+          <AdminLayout titulo="Configuracion de simulacros"><ConfiguracionSimulacroPage /></AdminLayout>
+        </ProtectedRoute>
+      }/>
       <Route path="/revisor/revision" element={
         <ProtectedRoute roles={['REVISOR', 'ADMIN']}>
           {rol === 'ADMIN'
@@ -489,16 +496,7 @@ export default function App() {
     </SimpleLayout>
   </ProtectedRoute>
 }/>
-
     </Routes>
-
-
-
-
-
-
   );
 
-
-  
 }

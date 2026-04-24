@@ -499,6 +499,54 @@ class SimulacroService
     ];
 }
 
+
+    public function actualizarConfiguracion(int $adminId, array $data): array
+    {
+        $config = $this->dao->obtenerConfiguracionActiva();
+
+        if (!$config) {
+            throw new \Exception('No hay una configuracion activa de simulacro.', 404);
+        }
+
+        $distribucion = $this->dao->obtenerDistribucionConfiguracion((int) $config->id);
+
+        if (count($distribucion) === 0) {
+            throw new \Exception('La configuracion activa no tiene distribucion por modulo.', 422);
+        }
+
+        $nombre = trim((string) ($data['nombre'] ?? $config->nombre));
+        $duracionMinutos = (int) ($data['duracion_minutos'] ?? $config->duracion_minutos);
+        $puntajeMinimo = (float) ($data['puntaje_minimo_aprobacion'] ?? $config->puntaje_minimo_aprobacion);
+
+        if ($nombre === '') {
+            throw new \Exception('El nombre de la configuracion es obligatorio.', 422);
+        }
+
+        if ($duracionMinutos < 1 || $duracionMinutos > 240) {
+            throw new \Exception('La duracion debe estar entre 1 y 240 minutos.', 422);
+        }
+
+        if ($puntajeMinimo < 0 || $puntajeMinimo > 100) {
+            throw new \Exception('El puntaje minimo debe estar entre 0 y 100.', 422);
+        }
+
+        $cantidadPreguntas = 0;
+
+        foreach ($distribucion as $fila) {
+            $cantidadPreguntas += (int) $fila->cantidad_preguntas;
+        }
+
+        $this->dao->crearNuevaConfiguracionActiva(
+            $nombre,
+            $duracionMinutos,
+            $cantidadPreguntas,
+            $puntajeMinimo,
+            $adminId,
+            $distribucion
+        );
+
+        return $this->configuracion();
+    }
 private function calcularInsightsModulos(int $estudianteId): array
 {
     $filas = $this->dao->obtenerHistorialResultadosPorModulo($estudianteId);
