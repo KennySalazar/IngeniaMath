@@ -26,33 +26,34 @@ export default function PracticaSesionPage() {
   const [procesandoTiempoAgotado, setProcesandoTiempoAgotado] = useState(false);
   const [timerEjercicioId, setTimerEjercicioId] = useState(null);
   
+  const [repitiendo, setRepitiendo] = useState(false);
 
   useEffect(() => {
     cargarDetalle();
-        }, [sesionId]);
+  }, [sesionId]);
 
-        useEffect(() => {
-        const ejercicioId = data?.ejercicio_actual?.id;
+  useEffect(() => {
+    const ejercicioId = data?.ejercicio_actual?.id;
 
-        if (ejercicioId) {
-            const minutosRaw = Number(data.ejercicio_actual.tiempo_estimado_minutos);
-            const minutos = Number.isFinite(minutosRaw) && minutosRaw > 0 ? minutosRaw : 2;
+    if (ejercicioId) {
+      const minutosRaw = Number(data.ejercicio_actual.tiempo_estimado_minutos);
+      const minutos = Number.isFinite(minutosRaw) && minutosRaw > 0 ? minutosRaw : 2;
 
-            setOpcionId(null);
-            setRespuestaTexto('');
-            setResultado(null);
-            setProximoEjercicio(null);
-            setTiempoInicio(Date.now());
-            setMensajeExito('');
-            setProcesandoTiempoAgotado(false);
-            setTiempoRestante(Math.max(1, Math.round(minutos * 60)));
-            setTimerEjercicioId(ejercicioId);
-        } else {
-            setTiempoRestante(null);
-            setProcesandoTiempoAgotado(false);
-            setTimerEjercicioId(null);
-        }
-        }, [data?.ejercicio_actual?.id]);
+      setOpcionId(null);
+      setRespuestaTexto('');
+      setResultado(null);
+      setProximoEjercicio(null);
+      setTiempoInicio(Date.now());
+      setMensajeExito('');
+      setProcesandoTiempoAgotado(false);
+      setTiempoRestante(Math.max(1, Math.round(minutos * 60)));
+      setTimerEjercicioId(ejercicioId);
+    } else {
+      setTiempoRestante(null);
+      setProcesandoTiempoAgotado(false);
+      setTimerEjercicioId(null);
+    }
+  }, [data?.ejercicio_actual?.id]);
 
   useEffect(() => {
     if (!data?.sesion?.fecha_fin && data?.sesion?.fecha_inicio) {
@@ -75,56 +76,49 @@ export default function PracticaSesionPage() {
     }
   }, [data?.sesion?.fecha_inicio, data?.sesion?.fecha_fin, data?.resumen?.tiempo_total_minutos]);
 
-    
-    useEffect(() => {
+  useEffect(() => {
     if (
-        !data?.ejercicio_actual?.id ||
-        timerEjercicioId !== data.ejercicio_actual.id ||
-        tiempoRestante === null ||
-        resultado ||
-        data?.sesion?.fecha_fin
+      !data?.ejercicio_actual?.id ||
+      timerEjercicioId !== data.ejercicio_actual.id ||
+      tiempoRestante === null ||
+      resultado ||
+      data?.sesion?.fecha_fin
     ) {
-        return;
+      return;
     }
 
     const intervalo = setInterval(() => {
-        setTiempoRestante(prev => {
-        if (prev === null) {
-            return null;
-        }
-
+      setTiempoRestante(prev => {
+        if (prev === null) return null;
         if (prev <= 1) {
-            clearInterval(intervalo);
-            return 0;
+          clearInterval(intervalo);
+          return 0;
         }
-
         return prev - 1;
-        });
+      });
     }, 1000);
 
     return () => clearInterval(intervalo);
-    }, [data?.ejercicio_actual?.id, timerEjercicioId, tiempoRestante, resultado, data?.sesion?.fecha_fin]);
+  }, [data?.ejercicio_actual?.id, timerEjercicioId, tiempoRestante, resultado, data?.sesion?.fecha_fin]);
 
- 
-
-    useEffect(() => {
+  useEffect(() => {
     if (
-        !data?.ejercicio_actual?.id ||
-        timerEjercicioId !== data.ejercicio_actual.id ||
-        tiempoRestante === null ||
-        data?.sesion?.fecha_fin ||
-        resultado ||
-        enviando ||
-        guardando ||
-        finalizando ||
-        procesandoTiempoAgotado ||
-        tiempoRestante > 0
+      !data?.ejercicio_actual?.id ||
+      timerEjercicioId !== data.ejercicio_actual.id ||
+      tiempoRestante === null ||
+      data?.sesion?.fecha_fin ||
+      resultado ||
+      enviando ||
+      guardando ||
+      finalizando ||
+      procesandoTiempoAgotado ||
+      tiempoRestante > 0
     ) {
-        return;
+      return;
     }
 
     omitirPorTiempo();
-    }, [
+  }, [
     tiempoRestante,
     timerEjercicioId,
     data?.ejercicio_actual?.id,
@@ -134,7 +128,7 @@ export default function PracticaSesionPage() {
     guardando,
     finalizando,
     procesandoTiempoAgotado,
-    ]);
+  ]);
 
   async function cargarDetalle() {
     try {
@@ -151,9 +145,7 @@ export default function PracticaSesionPage() {
   }
 
   async function guardarParaDespues() {
-    if (!data?.ejercicio_actual?.id) {
-      return;
-    }
+    if (!data?.ejercicio_actual?.id) return;
 
     try {
       setGuardando(true);
@@ -178,7 +170,6 @@ export default function PracticaSesionPage() {
           resumen: res.resumen || prev.resumen,
           ejercicio_actual: res.siguiente_ejercicio,
         }));
-
         setResultado(null);
         setProximoEjercicio(null);
         setOpcionId(null);
@@ -199,9 +190,7 @@ export default function PracticaSesionPage() {
   }
 
   async function omitirPorTiempo() {
-    if (!data?.ejercicio_actual?.id) {
-      return;
-    }
+    if (!data?.ejercicio_actual?.id) return;
 
     try {
       setProcesandoTiempoAgotado(true);
@@ -226,7 +215,6 @@ export default function PracticaSesionPage() {
           resumen: res.resumen || prev.resumen,
           ejercicio_actual: res.siguiente_ejercicio,
         }));
-
         setResultado(null);
         setProximoEjercicio(null);
         setOpcionId(null);
@@ -250,9 +238,7 @@ export default function PracticaSesionPage() {
   async function handleResponder(e) {
     e.preventDefault();
 
-    if (!data?.ejercicio_actual) {
-      return;
-    }
+    if (!data?.ejercicio_actual) return;
 
     const tipo = data.ejercicio_actual.tipo_ejercicio;
     const opciones = Array.isArray(data.ejercicio_actual.opciones) ? data.ejercicio_actual.opciones : [];
@@ -268,12 +254,10 @@ export default function PracticaSesionPage() {
       setError('Debes seleccionar una opcion.');
       return;
     }
-
     if (esVerdaderoFalsoManual && !respuestaTexto.trim()) {
       setError('Debes seleccionar Verdadero o Falso.');
       return;
     }
-
     if (!usaOpciones && !esVerdaderoFalsoManual && !respuestaTexto.trim()) {
       setError('Debes ingresar una respuesta.');
       return;
@@ -319,7 +303,6 @@ export default function PracticaSesionPage() {
       ...prev,
       ejercicio_actual: proximoEjercicio || null,
     }));
-
     setResultado(null);
     setProximoEjercicio(null);
     setOpcionId(null);
@@ -352,25 +335,71 @@ export default function PracticaSesionPage() {
     }
   }
 
-  function obtenerMensajeFinal(resumen) {
-    if (!resumen) {
-      return 'Sesion finalizada.';
+  async function repetirPractica() {
+    try {
+      setRepitiendo(true);
+      setError('');
+      setAvisosSistema([]);
+
+      const sesionActual = data?.sesion;
+      if (sesionActual && !sesionActual.fecha_fin) {
+        await practicaService.finalizar(sesionId);
+      }
+
+      const payload = construirPayloadRepeticion(sesionActual);
+
+    
+      const nuevaSesion = await practicaService.iniciar(payload);
+
+      navigate(`/estudiante/practica/sesion/${nuevaSesion.sesion.id}`);
+    } catch (e) {
+      setError(e.response?.data?.message || 'No se pudo iniciar una nueva practica.');
+    } finally {
+      setRepitiendo(false);
     }
+  }
+
+
+  function construirPayloadRepeticion(sesion) {
+    if (!sesion) return { modo: 'LIBRE' };
+
+    if (sesion.modo === 'GUIADA') {
+      return { modo: 'GUIADA' };
+    }
+
+    return {
+      modo: 'LIBRE',
+      modulo_id: sesion.modulo_id || null,
+      subtema_id: sesion.subtema_id || null,
+      nivel_dificultad: sesion.nivel_dificultad || 'BASICO',
+    };
+  }
+
+  function obtenerMensajeFinal(resumen) {
+    if (!resumen) return 'Sesion finalizada.';
 
     if ((resumen.total_respondidas || 0) === 0 && (resumen.total_omitidas || 0) > 0) {
       return 'Finalizaste la sesion guardando ejercicios para revisarlos despues.';
     }
-
     if ((resumen.porcentaje_aciertos || 0) >= 80) {
-      return 'Cerraste la sesion con muy buen rendimiento.';
+      return 'Cerraste la sesion con muy buen rendimiento. ¡Excelente trabajo!';
     }
-
     if ((resumen.porcentaje_aciertos || 0) >= 60) {
       return 'Cerraste la sesion con un rendimiento aceptable. Sigue practicando.';
     }
-
     return 'Cerraste la sesion. Conviene reforzar los subtemas con mas errores.';
   }
+
+  
+  function etiquetaModo(sesion) {
+    if (!sesion) return '';
+    if (sesion.modo === 'GUIADA') return 'Guiada';
+    const partes = [sesion.modulo_nombre, sesion.subtema_nombre, sesion.nivel_dificultad]
+      .filter(Boolean)
+      .join(' · ');
+    return partes || 'Libre';
+  }
+
 
   if (cargando) {
     return <div className="practica-sesion-loading">Cargando sesion...</div>;
@@ -510,12 +539,28 @@ export default function PracticaSesionPage() {
 
       {sesion?.fecha_fin ? (
         <div className="practica-sesion-card">
-          <p className="practica-sesion-card-texto">
-            Ya puedes iniciar otra practica desde el panel del estudiante.
-          </p>
-
           <div className="practica-sesion-final-mensaje">
             {obtenerMensajeFinal(resumen)}
+          </div>
+
+          <div className="practica-sesion-pct-wrap">
+            <div className="practica-sesion-pct-label">
+              <span>Porcentaje de aciertos</span>
+              <strong>{resumen?.porcentaje_aciertos || 0}%</strong>
+            </div>
+            <div className="practica-sesion-pct-bar">
+              <div
+                className="practica-sesion-pct-fill"
+                style={{
+                  width: `${Math.min(100, resumen?.porcentaje_aciertos || 0)}%`,
+                  background: (resumen?.porcentaje_aciertos || 0) >= 80
+                    ? '#10b981'
+                    : (resumen?.porcentaje_aciertos || 0) >= 60
+                      ? '#f59e0b'
+                      : '#ef4444',
+                }}
+              />
+            </div>
           </div>
 
           <div className="practica-sesion-final-grid">
@@ -564,7 +609,22 @@ export default function PracticaSesionPage() {
             </div>
           </div>
 
+          
+          <div className="practica-repetir-info">
+            <span>Repetir con:</span>
+            <strong>{etiquetaModo(sesion)}</strong>
+          </div>
+
           <div className="practica-sesion-actions practica-sesion-actions-final">
+            
+            <button
+              className="practica-sesion-btn practica-sesion-btn-repetir"
+              onClick={repetirPractica}
+              disabled={repitiendo}
+            >
+              {repitiendo ? 'Iniciando...' : '↺ Repetir practica'}
+            </button>
+
             <button
               className="practica-sesion-btn practica-sesion-btn-primario"
               onClick={() => navigate('/estudiante/practica')}
@@ -585,6 +645,8 @@ export default function PracticaSesionPage() {
             </button>
           </div>
         </div>
+
+      
       ) : resultado ? (
         <div className="practica-sesion-card">
           <div className={`practica-resultado ${resultado.es_correcta ? 'practica-resultado-ok' : 'practica-resultado-bad'}`}>
@@ -615,16 +677,28 @@ export default function PracticaSesionPage() {
                 Continuar
               </button>
             ) : (
-              <button
-                className="practica-sesion-btn practica-sesion-btn-peligro"
-                onClick={finalizarSesion}
-                disabled={finalizando}
-              >
-                {finalizando ? 'Finalizando...' : 'Finalizar sesion'}
-              </button>
+              <>
+                
+                <button
+                  className="practica-sesion-btn practica-sesion-btn-repetir"
+                  onClick={repetirPractica}
+                  disabled={repitiendo || finalizando}
+                >
+                  {repitiendo ? 'Iniciando...' : '↺ Repetir practica'}
+                </button>
+                <button
+                  className="practica-sesion-btn practica-sesion-btn-peligro"
+                  onClick={finalizarSesion}
+                  disabled={finalizando || repitiendo}
+                >
+                  {finalizando ? 'Finalizando...' : 'Finalizar sesion'}
+                </button>
+              </>
             )}
           </div>
         </div>
+
+      
       ) : ejercicio ? (
         <div className="practica-sesion-card">
           <div className="practica-sesion-ejercicio-top">
@@ -681,24 +755,17 @@ export default function PracticaSesionPage() {
                     name="respuesta_vf"
                     value="Verdadero"
                     checked={respuestaTexto === 'Verdadero'}
-                    onChange={() => {
-                      setRespuestaTexto('Verdadero');
-                      setOpcionId(null);
-                    }}
+                    onChange={() => { setRespuestaTexto('Verdadero'); setOpcionId(null); }}
                   />
                   <span>Verdadero</span>
                 </label>
-
                 <label className={`practica-opcion ${respuestaTexto === 'Falso' ? 'practica-opcion-activa' : ''}`}>
                   <input
                     type="radio"
                     name="respuesta_vf"
                     value="Falso"
                     checked={respuestaTexto === 'Falso'}
-                    onChange={() => {
-                      setRespuestaTexto('Falso');
-                      setOpcionId(null);
-                    }}
+                    onChange={() => { setRespuestaTexto('Falso'); setOpcionId(null); }}
                   />
                   <span>Falso</span>
                 </label>
@@ -735,20 +802,61 @@ export default function PracticaSesionPage() {
             </div>
           </form>
         </div>
+
+      
       ) : (
-        <div className="practica-sesion-card">
-          <h2 className="practica-sesion-card-titulo">No hay mas ejercicios disponibles</h2>
+        <div className="practica-sesion-card practica-sesion-card-vacia">
+          <div className="practica-sesion-vacia-icon">✓</div>
+          <h2 className="practica-sesion-card-titulo">
+            Ya no hay mas ejercicios disponibles
+          </h2>
           <p className="practica-sesion-card-texto">
-            Finaliza la sesion o inicia otra practica para seguir avanzando.
+            Agotaste todos los ejercicios de este modulo y nivel para esta sesion.
+            Puedes repetir la practica para seguir practicando con los mismos parametros,
+            o finalizar para ver tu resumen.
           </p>
 
+          <div className="practica-sesion-stats practica-sesion-stats-inline">
+            <div className="practica-sesion-stat">
+              <span>Respondidas</span>
+              <strong>{resumen?.total_respondidas || 0}</strong>
+            </div>
+            <div className="practica-sesion-stat">
+              <span>Correctos</span>
+              <strong>{resumen?.total_correctos || 0}</strong>
+            </div>
+            <div className="practica-sesion-stat">
+              <span>Aciertos</span>
+              <strong>{resumen?.porcentaje_aciertos || 0}%</strong>
+            </div>
+            <div className="practica-sesion-stat">
+              <span>Nivel</span>
+              <strong>{sesion?.nivel_dificultad || 'N/A'}</strong>
+            </div>
+          </div>
+
+         
+          <div className="practica-repetir-info">
+            <span>Repetir con:</span>
+            <strong>{etiquetaModo(sesion)}</strong>
+          </div>
+
           <div className="practica-sesion-actions">
+            
+            <button
+              className="practica-sesion-btn practica-sesion-btn-repetir"
+              onClick={repetirPractica}
+              disabled={repitiendo || finalizando}
+            >
+              {repitiendo ? 'Iniciando...' : '↺ Repetir practica'}
+            </button>
+
             <button
               className="practica-sesion-btn practica-sesion-btn-peligro"
               onClick={finalizarSesion}
-              disabled={finalizando}
+              disabled={finalizando || repitiendo}
             >
-              {finalizando ? 'Finalizando...' : 'Finalizar sesion'}
+              {finalizando ? 'Finalizando...' : 'Finalizar y ver resumen'}
             </button>
           </div>
         </div>
@@ -761,7 +869,6 @@ function formatearTiempoCorto(segundos) {
   const total = Math.max(0, Number(segundos || 0));
   const minutos = Math.floor(total / 60);
   const segundosRestantes = total % 60;
-
   return `${String(minutos).padStart(2, '0')}:${String(segundosRestantes).padStart(2, '0')}`;
 }
 
@@ -770,7 +877,6 @@ function formatearTiempoLargo(segundos) {
   const horas = Math.floor(total / 3600);
   const minutos = Math.floor((total % 3600) / 60);
   const segundosRestantes = total % 60;
-
   return [horas, minutos, segundosRestantes]
     .map(valor => String(valor).padStart(2, '0'))
     .join(':');
