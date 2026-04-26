@@ -27,6 +27,9 @@ import SimulacrosInicioPage from './pages/estudiante/SimulacrosInicioPage';
 import SimulacroSesionPage from './pages/estudiante/SimulacroSesionPage';
 import SimulacroHistorialPage from './pages/estudiante/SimulacroHistorialPage';
 import ConfiguracionSimulacroPage from './pages/admin/ConfiguracionSimulacroPage';
+import RecursosPage     from './pages/tutor/RecursosPage';
+import CrearRecursoPage from './pages/tutor/CrearRecursoPage';
+import EditarRecursoPage from './pages/tutor/EditarRecursoPage';
 
 // ── Navbar ───────────────────────────────────────────────────────────────────
 function Navbar() {
@@ -245,9 +248,38 @@ function SimpleLayout({ titulo, children, botonVolver }) {
 const DashboardAdmin = () => (
   <AdminLayout titulo="Gestión de Usuarios"><UsuariosPage /></AdminLayout>
 );
-const DashboardTutor = () => (
-  <SimpleLayout titulo="Mis ejercicios"><EjerciciosPage /></SimpleLayout>
-);
+const DashboardTutor = () => {
+  const navigate = useNavigate();
+
+  return (
+    <SimpleLayout titulo="Mis ejercicios">
+      <div style={{ marginBottom: '1.5rem' }}>
+        <button
+          onClick={() => navigate('/tutor/recursos')}
+          style={{
+            padding: '10px 18px',
+            background: 'rgba(99, 102, 241, 0.1)',
+            border: '1px solid rgba(99, 102, 241, 0.4)',
+            borderRadius: '10px',
+            color: '#818cf8',
+            fontSize: '14px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(99, 102, 241, 0.2)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'rgba(99, 102, 241, 0.1)'}
+        >
+          <span>📚</span> Gestionar Recursos Educativos
+        </button>
+      </div>
+      <EjerciciosPage />
+    </SimpleLayout>
+  );
+};
 const DashboardRevisor = () => (
   <SimpleLayout titulo="Panel de revisión"><RevisionPage /></SimpleLayout>
 );
@@ -431,6 +463,29 @@ export default function App() {
       <Route path="/revisor/dashboard" element={
         <ProtectedRoute roles={['REVISOR']}><DashboardRevisor /></ProtectedRoute>
       }/>
+      <Route path="/tutor/recursos" element={
+  <ProtectedRoute roles={['TUTOR', 'ADMIN']}>
+    <SimpleLayout titulo="Mis recursos" botonVolver={dashboardRol}>
+      <RecursosPage />
+    </SimpleLayout>
+  </ProtectedRoute>
+}/>
+
+<Route path="/tutor/recursos/crear" element={
+  <ProtectedRoute roles={['TUTOR', 'ADMIN']}>
+    <SimpleLayout titulo="Nuevo recurso" botonVolver="/tutor/recursos">
+      <CrearRecursoPage />
+    </SimpleLayout>
+  </ProtectedRoute>
+}/>
+<Route path="/tutor/recursos/:id/editar" element={
+  <ProtectedRoute roles={['TUTOR', 'ADMIN']}>
+    <SimpleLayout titulo="Editar recurso" botonVolver="/tutor/recursos">
+      <EditarRecursoPage />
+    </SimpleLayout>
+  </ProtectedRoute>
+}/>
+
 
       {/* Estudiante */}
     <Route path="/estudiante/dashboard" element={

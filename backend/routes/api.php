@@ -10,7 +10,7 @@ use App\Http\Controllers\Api\RutaAprendizajeController;
 use App\Http\Controllers\Api\PlanEstudioController;
 use App\Http\Controllers\Api\PracticaController;
 use App\Http\Controllers\Api\SimulacroController;
-
+use App\Http\Controllers\Api\RecursoController;
 
 
 // Ping
@@ -125,4 +125,40 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{simulacroId}/finalizar', [SimulacroController::class, 'finalizar']);
         
     });
+
+    // ── MODULO 5: RECURSOS EDUCATIVOS ─────────────────────────────────────────────
+
+// 1. Acceso Universal (Lectura)
+// Estudiantes pueden ver recursos aprobados/publicados. Tutores y Revisores también.
+Route::middleware('rol:ESTUDIANTE,TUTOR,REVISOR,ADMIN')->group(function () {
+    Route::get('/recursos',                          [RecursoController::class, 'index']);
+    Route::get('/recursos/ejercicio/{ejercicioId}',  [RecursoController::class, 'listarPorEjercicio']); // ← primero
+    Route::get('/recursos/{id}',                     [RecursoController::class, 'show']);               // ← después
+});
+
+// 2. Creación y Edición (Tutor e Instructor)
+// Solo ellos cargan contenido y lo envían a revisión.
+Route::middleware('rol:TUTOR,ADMIN')->group(function () {
+    Route::post('/recursos', [RecursoController::class, 'store']);
+    Route::put('/recursos/{id}', [RecursoController::class, 'update']);
+    Route::delete('/recursos/{id}', [RecursoController::class, 'destroy']);
+    
+    Route::patch('/recursos/{id}/enviar-revision', [RecursoController::class, 'enviarRevision']);
+    
+    // Para vincular un recurso a un ejercicio (Relación m:n)
+    Route::post('/recursos/{id}/vincular-ejercicio', [RecursoController::class, 'vincularEjercicio']);
+});
+
+// 3. Aprobación y Moderación (Revisor y Moderador)
+// Según tu enunciado: "deben ser aprobados por el Revisor antes de publicarse"
+Route::middleware('rol:REVISOR,ADMIN')->group(function () {
+    Route::patch('/recursos/{id}/aprobar', [RecursoController::class, 'aprobar']);
+    Route::patch('/recursos/{id}/rechazar', [RecursoController::class, 'rechazar']);
+});
+
+// 4. Publicación Final (Admin o Revisor según tu flujo)
+Route::middleware('rol:ADMIN,REVISOR')->group(function () {
+    Route::patch('/recursos/{id}/publicar', [RecursoController::class, 'publicar']);
+});
+
 });
