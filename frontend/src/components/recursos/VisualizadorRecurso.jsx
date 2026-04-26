@@ -2,87 +2,96 @@ import { useState } from 'react';
 
 // ── Flashcard con flip 3D ─────────────────────────────────────────────────────
 function FlashcardViewer({ flashcard }) {
-  const [girada, setGirada] = useState(false);
-
-  if (!flashcard) {
+    const [girada, setGirada] = useState(false);
+  
+    if (!flashcard) {
+      return (
+        <p style={{
+          textAlign: 'center', color: 'rgba(255,255,255,0.3)',
+          fontSize: 13, padding: '1rem 0',
+        }}>
+          Contenido no disponible.
+        </p>
+      );
+    }
+  
+    const caraBase = {
+      position: 'absolute', inset: 0,
+      borderRadius: 14,
+      display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      padding: '1.25rem', textAlign: 'center',
+      // Las tres propiedades clave para ocultar la cara trasera
+      backfaceVisibility: 'hidden',
+      WebkitBackfaceVisibility: 'hidden',
+      MozBackfaceVisibility: 'hidden',
+    };
+  
     return (
-      <p style={{
-        textAlign: 'center', color: 'rgba(255,255,255,0.3)',
-        fontSize: 13, padding: '1rem 0',
-      }}>
-        Contenido no disponible.
-      </p>
-    );
-  }
-
-  return (
-    <div style={{ perspective: 1000 }}>
-      <p style={{
-        textAlign: 'center', fontSize: 11,
-        color: 'rgba(255,255,255,0.3)', marginBottom: 10,
-      }}>
-        Clic para {girada ? 'ver la pregunta' : 'ver la respuesta'}
-      </p>
-
-      <div
-        onClick={() => setGirada(g => !g)}
-        style={{
-          position: 'relative', width: '100%', height: 200,
-          cursor: 'pointer', transformStyle: 'preserve-3d',
-          transform: girada ? 'rotateY(180deg)' : 'rotateY(0deg)',
-          transition: 'transform 0.5s cubic-bezier(0.4,0,0.2,1)',
-        }}
-      >
-        {/* Frente */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          backfaceVisibility: 'hidden',
-          WebkitBackfaceVisibility: 'hidden',
-          background: 'rgba(99,102,241,0.1)',
-          border: '1px solid rgba(99,102,241,0.3)',
-          borderRadius: 14,
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          padding: '1.25rem', textAlign: 'center',
+      <div style={{ perspective: '1000px', perspectiveOrigin: 'center' }}>
+        <p style={{
+          textAlign: 'center', fontSize: 11,
+          color: 'rgba(255,255,255,0.3)', marginBottom: 10,
         }}>
-          <span style={{
-            fontSize: 10, fontWeight: 700, color: '#818cf8',
-            textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10,
+          Clic para {girada ? 'ver la pregunta' : 'ver la respuesta'}
+        </p>
+  
+        {/* Contenedor que gira — necesita transformStyle preserve-3d */}
+        <div
+          onClick={() => setGirada(g => !g)}
+          style={{
+            position: 'relative',
+            width: '100%',
+            height: 200,
+            cursor: 'pointer',
+            // Sin esto backface-visibility no funciona
+            transformStyle: 'preserve-3d',
+            WebkitTransformStyle: 'preserve-3d',
+            transform: girada ? 'rotateY(180deg)' : 'rotateY(0deg)',
+            transition: 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)',
+          }}
+        >
+          {/* ── Cara frontal (pregunta) ── */}
+          <div style={{
+            ...caraBase,
+            background: 'rgba(99,102,241,0.1)',
+            border: '1px solid rgba(99,102,241,0.3)',
+            // La cara frontal NO necesita rotación extra
+            transform: 'rotateY(0deg)',
           }}>
-            🃏 Pregunta
-          </span>
-          <p style={{ color: 'white', fontSize: 15, lineHeight: 1.6, margin: 0 }}>
-            {flashcard.frente}
-          </p>
-        </div>
-
-        {/* Reverso */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          backfaceVisibility: 'hidden',
-          WebkitBackfaceVisibility: 'hidden',
-          transform: 'rotateY(180deg)',
-          background: 'rgba(16,185,129,0.1)',
-          border: '1px solid rgba(16,185,129,0.3)',
-          borderRadius: 14,
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          padding: '1.25rem', textAlign: 'center',
-        }}>
-          <span style={{
-            fontSize: 10, fontWeight: 700, color: '#10b981',
-            textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10,
+            <span style={{
+              fontSize: 10, fontWeight: 700, color: '#818cf8',
+              textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10,
+            }}>
+              🃏 Pregunta
+            </span>
+            <p style={{ color: 'white', fontSize: 15, lineHeight: 1.6, margin: 0 }}>
+              {flashcard.frente}
+            </p>
+          </div>
+  
+          {/* ── Cara trasera (respuesta) ── */}
+          <div style={{
+            ...caraBase,
+            background: 'rgba(16,185,129,0.1)',
+            border: '1px solid rgba(16,185,129,0.3)',
+            // La cara trasera empieza girada 180° para que quede oculta
+            transform: 'rotateY(180deg)',
           }}>
-            ✓ Respuesta
-          </span>
-          <p style={{ color: 'white', fontSize: 15, lineHeight: 1.6, margin: 0 }}>
-            {flashcard.reverso}
-          </p>
+            <span style={{
+              fontSize: 10, fontWeight: 700, color: '#10b981',
+              textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10,
+            }}>
+              ✓ Respuesta
+            </span>
+            <p style={{ color: 'white', fontSize: 15, lineHeight: 1.6, margin: 0 }}>
+              {flashcard.reverso}
+            </p>
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
 // ── Video YouTube ─────────────────────────────────────────────────────────────
 function VideoViewer({ url }) {
