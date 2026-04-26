@@ -19,7 +19,7 @@ class RecursoController extends Controller
 
     private function rolActual(Request $request): string
 {
-    return $request->user()->rol->nombre;
+    return $request->user()->codigoRol(); 
 }
 
 

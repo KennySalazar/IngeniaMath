@@ -30,6 +30,8 @@ import ConfiguracionSimulacroPage from './pages/admin/ConfiguracionSimulacroPage
 import RecursosPage     from './pages/tutor/RecursosPage';
 import CrearRecursoPage from './pages/tutor/CrearRecursoPage';
 import EditarRecursoPage from './pages/tutor/EditarRecursoPage';
+import BibliotecaPage from './pages/estudiante/BibliotecaPage';
+import RevisionRecursosPage from './pages/revisor/RevisionRecursosPage';
 
 // ── Navbar ───────────────────────────────────────────────────────────────────
 function Navbar() {
@@ -154,6 +156,7 @@ function AdminTabs() {
     { path: '/admin/banco',     label: 'Banco de ejercicios'},
     { path: '/admin/simulacros-configuracion', label: 'Simulacros'},
     { path: '/revisor/revision',label: 'Revisión'           },
+    { path: '/revisor/recursos', label: 'Recursos' },
     { path: '/tutor/ejercicios',label: 'Ejercicios'         },
     { path: '/perfil',          label: 'Mi perfil'          },
   ];
@@ -485,6 +488,18 @@ export default function App() {
     </SimpleLayout>
   </ProtectedRoute>
 }/>
+<Route path="/revisor/recursos" element={
+  <ProtectedRoute roles={['REVISOR', 'ADMIN']}>
+    {rol === 'ADMIN'
+      ? <AdminLayout titulo="Revisión de recursos">
+          <RevisionRecursosPage />
+        </AdminLayout>
+      : <SimpleLayout titulo="Revisión de recursos">
+          <RevisionRecursosPage />
+        </SimpleLayout>
+    }
+  </ProtectedRoute>
+}/>
 
 
       {/* Estudiante */}
@@ -548,6 +563,13 @@ export default function App() {
   <ProtectedRoute roles={['ESTUDIANTE']}>
     <SimpleLayout titulo="Practica" botonVolver="/estudiante/practica">
       <PracticaSesionPage />
+    </SimpleLayout>
+  </ProtectedRoute>
+}/>
+<Route path="/estudiante/biblioteca" element={
+  <ProtectedRoute roles={['ESTUDIANTE']}>
+    <SimpleLayout titulo="Biblioteca de recursos">
+      <BibliotecaPage />
     </SimpleLayout>
   </ProtectedRoute>
 }/>

@@ -302,6 +302,47 @@ export default function DashboardEstudiantePage() {
           )}
         </div>
 
+          {/* ── Biblioteca de recursos ─────────────────────────────────────── */}
+        <div className="dash-card dash-card-ancha">
+          <div className="dash-card-header">
+            <div
+              className="dash-card-icono"
+              style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981' }}
+            >
+              📚
+            </div>
+            <div>
+              <h2 className="dash-card-titulo">Biblioteca de recursos</h2>
+              <p className="dash-card-subtitulo">
+                Videos, PDFs, Flashcards y simuladores de apoyo
+              </p>
+            </div>
+          </div>
+
+          <div className="dash-stats-fila">
+            {[
+              { icono: '🎬', label: 'Videos'      },
+              { icono: '📄', label: 'PDFs'        },
+              { icono: '🃏', label: 'Flashcards'  },
+              { icono: '⚙️', label: 'Simuladores' },
+            ].map(t => (
+              <div key={t.label} className="dash-stat">
+                <span className="dash-stat-num">{t.icono}</span>
+                <span className="dash-stat-label">{t.label}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="dash-sin-datos" style={{ marginTop: 0 }}>
+            <button
+              className="dash-btn-primario"
+              onClick={() => navigate('/estudiante/biblioteca')}
+            >
+              Explorar recursos
+            </button>
+          </div>
+        </div>
+
         <div className="dash-card dash-card-accesos dash-card-ancha">
           <h2 className="dash-card-titulo" style={{ marginBottom: '1.25rem' }}>
             Accesos rapidos
@@ -377,6 +418,19 @@ export default function DashboardEstudiantePage() {
                 S
               </div>
               <span className="dash-acceso-label">Simulacros</span>
+              <span className="dash-acceso-flecha">→</span>
+            </button>
+            <button
+              className="dash-acceso"
+              onClick={() => navigate('/estudiante/biblioteca')}
+            >
+              <div
+                className="dash-acceso-icono"
+                style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981' }}
+              >
+                📚
+              </div>
+              <span className="dash-acceso-label">Biblioteca de recursos</span>
               <span className="dash-acceso-flecha">→</span>
             </button>
           </div>
