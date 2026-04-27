@@ -1,5 +1,3 @@
--- Contraseña todos: admin123
-
 SET search_path TO math, public;
 BEGIN;
 
@@ -156,7 +154,7 @@ BEGIN
   SELECT id INTO s27 FROM subtemas WHERE nombre='Funciones trigonométricas';
   SELECT id INTO s28 FROM subtemas WHERE nombre='Resolución de triángulos';
 
-  -- ===== MÓDULO 1: NÚMEROS REALES =====
+  -- MÓDULO 1: NÚMEROS REALES 
   INSERT INTO ejercicios (modulo_id,subtema_id,tutor_id,revisor_id,nivel_dificultad,tipo_ejercicio,enunciado,respuesta_correcta_texto,solucion_paso_a_paso,explicacion_conceptual,tiempo_estimado_minutos,estado,advertencia_duplicado,fecha_creacion,fecha_revision,fecha_publicacion)
   VALUES (m1,s1,t1,r1,'BASICO','OPCION_MULTIPLE','Calcula: $|-8| + |3| - |-2|$',NULL,'$|-8|=8$, $|3|=3$, $|-2|=2$. Resultado: $8+3-2=9$.','$|x|$ es la distancia al origen. Siempre $|x|\geq0$.',3,'PUBLICADO',false,NOW(),NOW(),NOW()) RETURNING id INTO ej;
   INSERT INTO opciones_ejercicio (ejercicio_id,orden_opcion,texto_opcion,es_correcta) VALUES (ej,1,'$9$',true),(ej,2,'$13$',false),(ej,3,'$-3$',false),(ej,4,'$3$',false);
@@ -204,7 +202,7 @@ BEGIN
   INSERT INTO opciones_ejercicio (ejercicio_id,orden_opcion,texto_opcion,es_correcta) VALUES (ej,1,'72',true),(ej,2,'36',false),(ej,3,'48',false),(ej,4,'144',false);
   INSERT INTO revisiones_ejercicio (ejercicio_id,revisor_id,accion,notas,fecha_evento) VALUES (ej,r2,'PUBLICADO',NULL,NOW());
 
-  -- ===== MÓDULO 2: ÁLGEBRA =====
+  -- MÓDULO 2: ÁLGEBRA 
   INSERT INTO ejercicios (modulo_id,subtema_id,tutor_id,revisor_id,nivel_dificultad,tipo_ejercicio,enunciado,respuesta_correcta_texto,solucion_paso_a_paso,explicacion_conceptual,tiempo_estimado_minutos,estado,advertencia_duplicado,fecha_creacion,fecha_revision,fecha_publicacion)
   VALUES (m2,s6,t1,r1,'BASICO','OPCION_MULTIPLE','Expande: $(x+5)^2$',NULL,'$x^2+10x+25$.','$(a+b)^2=a^2+2ab+b^2$.',3,'PUBLICADO',false,NOW(),NOW(),NOW()) RETURNING id INTO ej;
   INSERT INTO opciones_ejercicio (ejercicio_id,orden_opcion,texto_opcion,es_correcta) VALUES (ej,1,'$x^2+10x+25$',true),(ej,2,'$x^2+25$',false),(ej,3,'$x^2+5x+25$',false),(ej,4,'$x^2+10x+10$',false);
@@ -255,7 +253,7 @@ BEGIN
   INSERT INTO opciones_ejercicio (ejercicio_id,orden_opcion,texto_opcion,es_correcta) VALUES (ej,1,'$(x+1)(x+3)(x-2)$',true),(ej,2,'$(x-1)(x+3)(x-2)$',false),(ej,3,'$(x+1)(x-3)(x+2)$',false),(ej,4,'$(x+1)(x^2-5x-6)$',false);
   INSERT INTO revisiones_ejercicio (ejercicio_id,revisor_id,accion,notas,fecha_evento) VALUES (ej,r3,'PUBLICADO',NULL,NOW());
 
-  -- ===== MÓDULO 3: ECUACIONES =====
+  -- MÓDULO 3: ECUACIONES 
   INSERT INTO ejercicios (modulo_id,subtema_id,tutor_id,revisor_id,nivel_dificultad,tipo_ejercicio,enunciado,respuesta_correcta_texto,solucion_paso_a_paso,explicacion_conceptual,tiempo_estimado_minutos,estado,advertencia_duplicado,fecha_creacion,fecha_revision,fecha_publicacion)
   VALUES (m3,s10,t1,r1,'BASICO','RESPUESTA_NUMERICA','Resuelve: $3x-7=2x+5$','12','$x=12$.','Agrupar términos semejantes.',3,'PUBLICADO',false,NOW(),NOW(),NOW()) RETURNING id INTO ej;
   INSERT INTO revisiones_ejercicio (ejercicio_id,revisor_id,accion,notas,fecha_evento) VALUES (ej,r1,'PUBLICADO',NULL,NOW());
@@ -305,7 +303,7 @@ BEGIN
   INSERT INTO opciones_ejercicio (ejercicio_id,orden_opcion,texto_opcion,es_correcta) VALUES (ej,1,'$x\geq-3$',true),(ej,2,'$x\leq-3$',false),(ej,3,'$x\geq3$',false),(ej,4,'$x\leq3$',false);
   INSERT INTO revisiones_ejercicio (ejercicio_id,revisor_id,accion,notas,fecha_evento) VALUES (ej,r2,'PUBLICADO',NULL,NOW());
 
-  -- ===== MÓDULO 4: FUNCIONES =====
+  -- MÓDULO 4: FUNCIONES
   INSERT INTO ejercicios (modulo_id,subtema_id,tutor_id,revisor_id,nivel_dificultad,tipo_ejercicio,enunciado,respuesta_correcta_texto,solucion_paso_a_paso,explicacion_conceptual,tiempo_estimado_minutos,estado,advertencia_duplicado,fecha_creacion,fecha_revision,fecha_publicacion)
   VALUES (m4,s14,t3,r3,'BASICO','OPCION_MULTIPLE','Evalúa $f(x)=3x^2-2x+1$ en $x=-2$.',NULL,'17.','$3(4)+4+1=17$.',2,'PUBLICADO',false,NOW(),NOW(),NOW()) RETURNING id INTO ej;
   INSERT INTO opciones_ejercicio (ejercicio_id,orden_opcion,texto_opcion,es_correcta) VALUES (ej,1,'17',true),(ej,2,'9',false),(ej,3,'5',false),(ej,4,'-17',false);
@@ -356,7 +354,7 @@ BEGIN
   INSERT INTO opciones_ejercicio (ejercicio_id,orden_opcion,texto_opcion,es_correcta) VALUES (ej,1,'$y=4x+7$',true),(ej,2,'$y=4x-1$',false),(ej,3,'$y=-\frac{1}{4}x+7$',false),(ej,4,'$y=4x+3$',false);
   INSERT INTO revisiones_ejercicio (ejercicio_id,revisor_id,accion,notas,fecha_evento) VALUES (ej,r2,'PUBLICADO',NULL,NOW());
 
-  -- ===== MÓDULO 5: GEOMETRÍA ANALÍTICA =====
+  -- MÓDULO 5: GEOMETRÍA ANALÍTICA 
   INSERT INTO ejercicios (modulo_id,subtema_id,tutor_id,revisor_id,nivel_dificultad,tipo_ejercicio,enunciado,respuesta_correcta_texto,solucion_paso_a_paso,explicacion_conceptual,tiempo_estimado_minutos,estado,advertencia_duplicado,fecha_creacion,fecha_revision,fecha_publicacion)
   VALUES (m5,s18,t1,r1,'BASICO','OPCION_MULTIPLE','Pendiente de $3x-2y+8=0$.',NULL,'$\frac{3}{2}$.','$y=\frac{3}{2}x+4$.',3,'PUBLICADO',false,NOW(),NOW(),NOW()) RETURNING id INTO ej;
   INSERT INTO opciones_ejercicio (ejercicio_id,orden_opcion,texto_opcion,es_correcta) VALUES (ej,1,'$\frac{3}{2}$',true),(ej,2,'$-\frac{3}{2}$',false),(ej,3,'3',false),(ej,4,'$\frac{2}{3}$',false);
@@ -406,7 +404,7 @@ BEGIN
   INSERT INTO opciones_ejercicio (ejercicio_id,orden_opcion,texto_opcion,es_correcta) VALUES (ej,1,'$(0,3)$',true),(ej,2,'$(3,0)$',false),(ej,3,'$(0,12)$',false),(ej,4,'$(0,-3)$',false);
   INSERT INTO revisiones_ejercicio (ejercicio_id,revisor_id,accion,notas,fecha_evento) VALUES (ej,r3,'PUBLICADO',NULL,NOW());
 
-  -- ===== MÓDULO 6: GEOMETRÍA =====
+  -- MÓDULO 6: GEOMETRÍA 
   INSERT INTO ejercicios (modulo_id,subtema_id,tutor_id,revisor_id,nivel_dificultad,tipo_ejercicio,enunciado,respuesta_correcta_texto,solucion_paso_a_paso,explicacion_conceptual,tiempo_estimado_minutos,estado,advertencia_duplicado,fecha_creacion,fecha_revision,fecha_publicacion)
   VALUES (m6,s22,t4,r3,'BASICO','RESPUESTA_NUMERICA','Catetos 6 cm y 8 cm. ¿Hipotenusa?','10','$\sqrt{36+64}=10$.','$c^2=a^2+b^2$.',3,'PUBLICADO',false,NOW(),NOW(),NOW()) RETURNING id INTO ej;
   INSERT INTO revisiones_ejercicio (ejercicio_id,revisor_id,accion,notas,fecha_evento) VALUES (ej,r3,'PUBLICADO',NULL,NOW());
@@ -454,7 +452,7 @@ BEGIN
   INSERT INTO opciones_ejercicio (ejercicio_id,orden_opcion,texto_opcion,es_correcta) VALUES (ej,1,'$288\pi$ cm³',true),(ej,2,'$144\pi$ cm³',false),(ej,3,'$72\pi$ cm³',false),(ej,4,'$864\pi$ cm³',false);
   INSERT INTO revisiones_ejercicio (ejercicio_id,revisor_id,accion,notas,fecha_evento) VALUES (ej,r3,'PUBLICADO',NULL,NOW());
 
-  -- ===== MÓDULO 7: TRIGONOMETRÍA =====
+  -- MÓDULO 7: TRIGONOMETRÍA 
   INSERT INTO ejercicios (modulo_id,subtema_id,tutor_id,revisor_id,nivel_dificultad,tipo_ejercicio,enunciado,respuesta_correcta_texto,solucion_paso_a_paso,explicacion_conceptual,tiempo_estimado_minutos,estado,advertencia_duplicado,fecha_creacion,fecha_revision,fecha_publicacion)
   VALUES (m7,s26,t4,r1,'BASICO','OPCION_MULTIPLE','Convierte $180°$ a radianes.',NULL,'$\pi$.','$180\times\frac{\pi}{180}=\pi$.',2,'PUBLICADO',false,NOW(),NOW(),NOW()) RETURNING id INTO ej;
   INSERT INTO opciones_ejercicio (ejercicio_id,orden_opcion,texto_opcion,es_correcta) VALUES (ej,1,'$\pi$',true),(ej,2,'$2\pi$',false),(ej,3,'$\frac{\pi}{2}$',false),(ej,4,'$\frac{\pi}{4}$',false);
@@ -506,9 +504,7 @@ BEGIN
 
 END $$;
 
--- ============================================================
 -- TEST DIAGNÓSTICO
--- ============================================================
 INSERT INTO tests_diagnostico (nombre,descripcion,activo,creado_por)
 VALUES ('Diagnóstico Inicial USAC','Test de nivelación con preguntas de los 7 módulos',TRUE,
         (SELECT id FROM usuarios WHERE correo='kenny.salazar@ingeniamath.gt'));
@@ -532,9 +528,8 @@ JOIN (
     WHERE rn <= 2
 ) x ON TRUE
 WHERE t.nombre = 'Diagnóstico Inicial USAC';
--- ============================================================
+
 -- INTENTOS DE DIAGNÓSTICO
--- ============================================================
 INSERT INTO intentos_diagnostico (test_diagnostico_id,estudiante_id,estado,puntaje_total,fecha_inicio,fecha_fin)
 VALUES
 ((SELECT id FROM tests_diagnostico LIMIT 1),
@@ -559,9 +554,7 @@ SELECT i.id, m.id,
 FROM intentos_diagnostico i, modulos_tematicos m
 WHERE i.estudiante_id=(SELECT id FROM usuarios WHERE correo='luis.perez@correo.com');
 
--- ============================================================
 -- RUTAS DE APRENDIZAJE
--- ============================================================
 INSERT INTO rutas_aprendizaje (estudiante_id,intento_diagnostico_id,activa)
 VALUES
 ((SELECT id FROM usuarios WHERE correo='ana.morales@correo.com'),
@@ -585,9 +578,8 @@ JOIN modulos_tematicos m ON m.orden=4
 JOIN subtemas s ON s.modulo_id=m.id
 WHERE u.correo='luis.perez@correo.com';
 
--- ============================================================
+
 -- CONFIGURACIÓN Y SIMULACROS
--- ============================================================
 INSERT INTO configuraciones_simulacro (nombre,duracion_minutos,cantidad_preguntas,puntaje_minimo_aprobacion,activa,creado_por)
 VALUES ('Simulacro Estándar USAC',90,14,61.00,TRUE,
         (SELECT id FROM usuarios WHERE correo='kenny.salazar@ingeniamath.gt'));
@@ -627,36 +619,61 @@ SELECT sim.id, m.id, 2,
        CASE WHEN m.orden <= 5 THEN 100.00 ELSE 50.00 END
 FROM simulacros sim, modulos_tematicos m;
 
--- ============================================================
+
 -- RECURSOS EDUCATIVOS (14: 1 PDF + 1 video por módulo)
--- ============================================================
-INSERT INTO recursos_educativos (modulo_id,subtema_id,tutor_id,revisor_id,tipo_recurso,titulo,descripcion,url_recurso,estado,fecha_publicacion)
-SELECT m.id, s.id,
-  (SELECT id FROM usuarios WHERE correo='escarlett.castillo@ingeniamath.gt'),
-  (SELECT id FROM usuarios WHERE correo='walter.reyes@ingeniamath.gt'),
-  tipo, titulo, desc_, url, 'PUBLICADO', NOW()
+INSERT INTO recursos_educativos (
+    modulo_id,
+    subtema_id,
+    tutor_id,
+    revisor_id,
+    tipo_recurso,
+    titulo,
+    descripcion,
+    url_recurso,
+    estado,
+    fecha_publicacion
+)
+SELECT 
+    m.id,
+    s.id,
+    (SELECT id FROM usuarios WHERE correo = 'escarlett.castillo@ingeniamath.gt'),
+    (SELECT id FROM usuarios WHERE correo = 'walter.reyes@ingeniamath.gt'),
+    tipo,
+    titulo,
+    desc_,
+    url,
+    'PUBLICADO',
+    NOW()
 FROM modulos_tematicos m
 JOIN (VALUES
-  (1,'VIDEO','Valor absoluto explicado','Propiedades y ejercicios de valor absoluto','https://youtube.com/watch?v=valabs'),
-  (1,'PDF','Guía de porcentajes','Resumen de porcentajes y proporcionalidad','https://drive.google.com/porcentajes'),
-  (2,'VIDEO','Productos notables','Los 5 productos notables más importantes','https://youtube.com/watch?v=prodnotables'),
-  (2,'PDF','Técnicas de factorización','Formulario con todos los métodos','https://drive.google.com/factorizacion'),
-  (3,'VIDEO','Ecuaciones cuadráticas','Tres métodos de resolución','https://youtube.com/watch?v=cuadraticas'),
-  (3,'PDF','Guía de ecuaciones','Ecuaciones lineales y cuadráticas','https://drive.google.com/ecuaciones'),
-  (4,'VIDEO','Dominio y rango','Cómo encontrar dominio y rango','https://youtube.com/watch?v=domrango'),
-  (4,'PDF','Guía de funciones','Función lineal, cuadrática y composición','https://drive.google.com/funciones'),
-  (5,'VIDEO','Geometría analítica','Recta, distancia y circunferencia','https://youtube.com/watch?v=geoanalítica'),
-  (5,'PDF','Formulario de geometría analítica','Fórmulas de distancia, punto medio y cónicas','https://drive.google.com/geoana'),
-  (6,'VIDEO','Teorema de Pitágoras','Demostración y aplicaciones','https://youtube.com/watch?v=pitagoras'),
-  (6,'PDF','Áreas y volúmenes','Formulario de figuras geométricas','https://drive.google.com/areasyvolumenes'),
-  (7,'VIDEO','Funciones trigonométricas','Seno, coseno y tangente','https://youtube.com/watch?v=trigfunciones'),
-  (7,'PDF','Tabla trigonométrica','Valores exactos para ángulos especiales','https://drive.google.com/tablatrig')
-) AS data(mod_orden, tipo, titulo, desc_, url) ON m.orden = data.mod_orden
-JOIN subtemas s ON s.modulo_id = m.id AND s.orden_complejidad = 1;
+    (1, 'VIDEO', 'Valor absoluto explicado', 'Propiedades y ejercicios de valor absoluto', 'https://www.youtube.com/watch?v=vZAQkfWMNus'),
+    (1, 'PDF',   'Guía de porcentajes', 'Resumen de porcentajes y proporcionalidad', 'https://secundaria.ipl.edu.do/files/41/Descargas/202/Guia-de-practica-1ero-de-secundaria-matematica.pdf'),
 
--- ============================================================
+    (2, 'VIDEO', 'Productos notables', 'Los 5 productos notables más importantes', 'https://www.youtube.com/watch?v=I6FH_gaVYDk'),
+    (2, 'PDF',   'Técnicas de factorización', 'Formulario con todos los métodos', 'https://barajasvictor.wordpress.com/wp-content/uploads/2014/07/ejercicios-de-productos-notables-y-factorizacic3b3n.pdf'),
+
+    (3, 'VIDEO', 'Ecuaciones cuadráticas', 'Tres métodos de resolución', 'https://www.youtube.com/watch?v=BxrJmKdPHRs'),
+    (3, 'PDF',   'Guía de ecuaciones', 'Ecuaciones lineales y cuadráticas', 'https://institutonacional.cl/wp-content/uploads/2019/11/2-Matem%C3%A1tica-Ecuaci%C3%B3n-Cuadr%C3%A1tica.pdf'),
+
+    (4, 'VIDEO', 'Dominio y rango', 'Cómo encontrar dominio y rango', 'https://www.youtube.com/watch?v=K88U_OE9G64'),
+    (4, 'PDF',   'Guía de funciones', 'Función lineal, cuadrática y composición', 'https://nodo.ugto.mx/wp-content/uploads/2017/03/Unidad-2-Productos-Notables-y-Factorizacion.pdf'),
+
+    (5, 'VIDEO', 'Geometría analítica', 'Recta, distancia y circunferencia', 'https://www.youtube.com/watch?v=iXfTJQG4tV4'),
+    (5, 'PDF',   'Formulario de geometría analítica', 'Fórmulas de distancia, punto medio y cónicas', 'https://www.jica.go.jp/project/elsalvador/004/materials/ku57pq00003uf5za-att/workbook_JS3_03.pdf'),
+
+    (6, 'VIDEO', 'Teorema de Pitágoras', 'Demostración y aplicaciones', 'https://www.youtube.com/watch?v=I6FH_gaVYDk'),
+    (6, 'PDF',   'Áreas y volúmenes', 'Formulario de figuras geométricas', 'https://www.jica.go.jp/project/elsalvador/004/materials/ku57pq00003uf5za-att/workbook_JS3_03.pdf'),
+
+    (7, 'VIDEO', 'Funciones trigonométricas', 'Seno, coseno y tangente', 'https://www.youtube.com/watch?v=K88U_OE9G64'),
+    (7, 'PDF',   'Tabla trigonométrica', 'Valores exactos para ángulos especiales', 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Valores_trigonom%C3%A9tricos_exactos_de_la_funci%C3%B3n_seno_y_coseno.pdf')
+) AS data(mod_orden, tipo, titulo, desc_, url)
+    ON m.orden = data.mod_orden
+JOIN subtemas s
+    ON s.modulo_id = m.id
+   AND s.orden_complejidad = 1;
+
+
 -- FLASHCARDS (10 en 5 módulos)
--- ============================================================
 INSERT INTO flashcards (modulo_id,subtema_id,titulo,frente,reverso,creado_por)
 VALUES
 ((SELECT id FROM modulos_tematicos WHERE orden=1),(SELECT id FROM subtemas WHERE nombre='Valor absoluto'),
@@ -690,9 +707,8 @@ VALUES
  'Teorema de Pitágoras','¿Enunciado del teorema?','$c^2=a^2+b^2$, $c$ es hipotenusa, $a$ y $b$ son catetos.',
  (SELECT id FROM usuarios WHERE correo='brandon.hernandez@ingeniamath.gt'));
 
--- ============================================================
+
 -- FORO
--- ============================================================
 INSERT INTO hilos_foro (estudiante_id,modulo_id,subtema_id,titulo,contenido,estado)
 VALUES
 ((SELECT id FROM usuarios WHERE correo='ana.morales@correo.com'),
