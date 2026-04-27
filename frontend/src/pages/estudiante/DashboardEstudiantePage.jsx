@@ -433,6 +433,19 @@ export default function DashboardEstudiantePage() {
               <span className="dash-acceso-label">Biblioteca de recursos</span>
               <span className="dash-acceso-flecha">→</span>
             </button>
+            <button
+              className="dash-acceso"
+              onClick={() => navigate('/estudiante/estadisticas')}
+            >
+              <div
+                className="dash-acceso-icono"
+                style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981' }}
+              >
+                📈
+              </div>
+              <span className="dash-acceso-label">Mis estadísticas</span>
+              <span className="dash-acceso-flecha">→</span>
+            </button>
           </div>
         </div>
       </div>

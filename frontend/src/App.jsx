@@ -32,6 +32,7 @@ import CrearRecursoPage from './pages/tutor/CrearRecursoPage';
 import EditarRecursoPage from './pages/tutor/EditarRecursoPage';
 import BibliotecaPage from './pages/estudiante/BibliotecaPage';
 import RevisionRecursosPage from './pages/revisor/RevisionRecursosPage';
+import EstadisticasPage from './pages/estudiante/EstadisticasPage';
 
 // ── Navbar ───────────────────────────────────────────────────────────────────
 function Navbar() {
@@ -570,6 +571,13 @@ export default function App() {
   <ProtectedRoute roles={['ESTUDIANTE']}>
     <SimpleLayout titulo="Biblioteca de recursos">
       <BibliotecaPage />
+    </SimpleLayout>
+  </ProtectedRoute>
+}/>
+<Route path="/estudiante/estadisticas" element={
+  <ProtectedRoute roles={['ESTUDIANTE']}>
+    <SimpleLayout titulo="Mis estadísticas">
+      <EstadisticasPage />
     </SimpleLayout>
   </ProtectedRoute>
 }/>

@@ -11,7 +11,7 @@ use App\Http\Controllers\Api\PlanEstudioController;
 use App\Http\Controllers\Api\PracticaController;
 use App\Http\Controllers\Api\SimulacroController;
 use App\Http\Controllers\Api\RecursoController;
-
+use App\Http\Controllers\Api\EstadisticasController;
 
 // Ping
 Route::get('/ping', fn() => response()->json([
@@ -124,6 +124,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{simulacroId}/responder', [SimulacroController::class, 'responder']);
         Route::post('/{simulacroId}/finalizar', [SimulacroController::class, 'finalizar']);
         
+    });
+
+    Route::middleware('rol:ESTUDIANTE')->group(function () {
+        Route::get('/estadisticas/estudiante', [EstadisticasController::class, 'estudiante']);
     });
 
     // ── MODULO 5: RECURSOS EDUCATIVOS ─────────────────────────────────────────────
