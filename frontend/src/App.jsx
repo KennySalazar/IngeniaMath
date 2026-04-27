@@ -34,6 +34,8 @@ import BibliotecaPage from './pages/estudiante/BibliotecaPage';
 import RevisionRecursosPage from './pages/revisor/RevisionRecursosPage';
 import EstadisticasPage from './pages/estudiante/EstadisticasPage';
 import EstadisticasTutorPage from './pages/tutor/EstadisticasTutorPage';
+import EstadisticasAdminPage from './pages/admin/EstadisticasAdminPage';
+
 
 // ── Navbar ───────────────────────────────────────────────────────────────────
 function Navbar() {
@@ -161,6 +163,7 @@ function AdminTabs() {
     { path: '/revisor/recursos', label: 'Recursos' },
     { path: '/tutor/ejercicios',label: 'Ejercicios'         },
     { path: '/perfil',          label: 'Mi perfil'          },
+    { path: '/admin/estadisticas', label: 'Estadísticas' },
   ];
 
   return (
@@ -483,6 +486,13 @@ export default function App() {
       </SimpleLayout>
     </ProtectedRoute>
   }/>
+  <Route path="/admin/estadisticas" element={
+  <ProtectedRoute roles={['ADMIN']}>
+    <AdminLayout titulo="Estadísticas de la plataforma">
+      <EstadisticasAdminPage />
+    </AdminLayout>
+  </ProtectedRoute>
+}/>
 
       {/* Tutor */}
       <Route path="/tutor/dashboard" element={

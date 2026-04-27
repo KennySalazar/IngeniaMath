@@ -134,6 +134,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/estadisticas/tutor/exportar',  [EstadisticasController::class, 'exportarReporteTutor']);
     });
 
+    Route::middleware('rol:ADMIN')->group(function () {
+        Route::get('/estadisticas/admin',          [EstadisticasController::class, 'admin']);
+        Route::get('/estadisticas/admin/exportar', [EstadisticasController::class, 'exportarReporteAdmin']);
+    });
+
     // ── MODULO 5: RECURSOS EDUCATIVOS ─────────────────────────────────────────────
 
 // 1. Acceso Universal (Lectura)

@@ -19,5 +19,13 @@ export const estadisticasService = {
       responseType: 'blob',
     });
   },
+  async dashboardAdmin() {
+    const res = await api.get('/estadisticas/admin');
+    return res.data.data;
+  },
+  
+  exportarReporteAdmin() {
+    return api.get('/estadisticas/admin/exportar', { responseType: 'blob' });
+  },
 
 };

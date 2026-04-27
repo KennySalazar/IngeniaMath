@@ -8,13 +8,42 @@ use App\Services\EstadisticasTutorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Services\EstadisticasAdminService;
 
 class EstadisticasController extends Controller
 {
     public function __construct(
         private EstadisticasService      $estudianteService,
         private EstadisticasTutorService $tutorService,
+        private EstadisticasAdminService $adminService,
     ) {}
+
+    // ── Admin ─────────────────────────────────────────────────────────────────────
+
+public function admin(Request $request): JsonResponse
+{
+    try {
+        $data = $this->adminService->dashboardAdmin();
+        return response()->json(['data' => $data]);
+    } catch (\Exception $e) {
+        return $this->responderError($e);
+    }
+}
+
+public function exportarReporteAdmin(Request $request): Response
+{
+    try {
+        $csv      = $this->adminService->generarReporteCsv();
+        $filename = 'reporte_plataforma_' . date('Y-m-d') . '.csv';
+
+        return response($csv, 200, [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ]);
+    } catch (\Exception $e) {
+        return response($e->getMessage(), 500);
+    }
+}
 
     // ── Estudiante ───────────────────────────────────────────────────────────
 
