@@ -33,6 +33,7 @@ import EditarRecursoPage from './pages/tutor/EditarRecursoPage';
 import BibliotecaPage from './pages/estudiante/BibliotecaPage';
 import RevisionRecursosPage from './pages/revisor/RevisionRecursosPage';
 import EstadisticasPage from './pages/estudiante/EstadisticasPage';
+import EstadisticasTutorPage from './pages/tutor/EstadisticasTutorPage';
 
 // ── Navbar ───────────────────────────────────────────────────────────────────
 function Navbar() {
@@ -257,7 +258,8 @@ const DashboardTutor = () => {
 
   return (
     <SimpleLayout titulo="Mis ejercicios">
-      <div style={{ marginBottom: '1.5rem' }}>
+      <div style={{ marginBottom: '1.5rem', display: 'flex', gap: '12px' }}>
+        {/* Botón Recursos */}
         <button
           onClick={() => navigate('/tutor/recursos')}
           style={{
@@ -279,7 +281,31 @@ const DashboardTutor = () => {
         >
           <span>📚</span> Gestionar Recursos Educativos
         </button>
+  
+        {/* Botón Estadísticas */}
+        <button
+          onClick={() => navigate('/tutor/estadisticas')}
+          style={{
+            padding: '10px 18px',
+            background: 'rgba(16, 185, 129, 0.1)', // Un verde suave para variar
+            border: '1px solid rgba(16, 185, 129, 0.4)',
+            borderRadius: '10px',
+            color: '#34d399',
+            fontSize: '14px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(16, 185, 129, 0.2)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)'}
+        >
+          <span>📈</span> Ver estadísticas del grupo
+        </button>
       </div>
+      
       <EjerciciosPage />
     </SimpleLayout>
   );
@@ -462,6 +488,13 @@ export default function App() {
       <Route path="/tutor/dashboard" element={
         <ProtectedRoute roles={['TUTOR']}><DashboardTutor /></ProtectedRoute>
       }/>
+      <Route path="/tutor/estadisticas" element={
+        <ProtectedRoute roles={['TUTOR', 'ADMIN']}>
+          <SimpleLayout titulo="Estadísticas del grupo" botonVolver="/tutor/dashboard">
+            <EstadisticasTutorPage />
+          </SimpleLayout>
+        </ProtectedRoute>
+        }/>
 
       {/* Revisor */}
       <Route path="/revisor/dashboard" element={

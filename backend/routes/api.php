@@ -129,6 +129,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('rol:ESTUDIANTE')->group(function () {
         Route::get('/estadisticas/estudiante', [EstadisticasController::class, 'estudiante']);
     });
+    Route::middleware('rol:TUTOR,ADMIN')->group(function () {
+        Route::get('/estadisticas/tutor',           [EstadisticasController::class, 'tutor']);
+        Route::get('/estadisticas/tutor/exportar',  [EstadisticasController::class, 'exportarReporteTutor']);
+    });
 
     // ── MODULO 5: RECURSOS EDUCATIVOS ─────────────────────────────────────────────
 
