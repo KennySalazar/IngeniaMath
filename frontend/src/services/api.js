@@ -1,12 +1,12 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api',
+  baseURL: 'http://192.168.0.8:8000/api',
   headers: {
     'Content-Type': 'application/json',
-    Accept: 'application/json',
+    'Accept': 'application/json',
   },
-  withCredentials: false,
+  withCredentials: false, // No enviar cookies, usamos token en headers
 });
 
 api.interceptors.request.use((config) => {
