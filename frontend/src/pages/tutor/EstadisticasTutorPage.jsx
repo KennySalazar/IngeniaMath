@@ -143,7 +143,7 @@ function TablaEstudiantes({ estudiantes }) {
           </tr>
         </thead>
         <tbody>
-          {ordenados.map((e, i) => {
+          {ordenados.map((e) => {
             const colorAciertos = e.porcentaje_aciertos >= 70 ? '#10b981'
               : e.porcentaje_aciertos >= 40 ? '#f59e0b' : '#ef4444';
 
@@ -416,7 +416,7 @@ export default function EstadisticasTutorPage() {
             </p>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 280, overflowY: 'auto' }}>
-              {datos.ejercicios_dificiles.map((ej, i) => {
+              {datos.ejercicios_dificiles.map((ej) => {
                 const cfg = COLORES_NIVEL[ej.nivel_dificultad] ?? COLORES_NIVEL.BASICO;
                 return (
                   <div
