@@ -12,6 +12,8 @@ use App\Http\Controllers\Api\PracticaController;
 use App\Http\Controllers\Api\SimulacroController;
 use App\Http\Controllers\Api\RecursoController;
 use App\Http\Controllers\Api\EstadisticasController;
+use App\Http\Controllers\Api\ForoController;
+
 
 // Ping
 Route::get('/ping', fn() => response()->json([
@@ -138,6 +140,31 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/estadisticas/admin',          [EstadisticasController::class, 'admin']);
         Route::get('/estadisticas/admin/exportar', [EstadisticasController::class, 'exportarReporteAdmin']);
     });
+    
+    // Lectura — todos los roles
+Route::middleware('rol:ESTUDIANTE,TUTOR,REVISOR,ADMIN')->group(function () {
+    Route::get('/foro',        [ForoController::class, 'index']);
+    Route::get('/foro/badge',  [ForoController::class, 'badge']);
+    Route::get('/foro/{id}',   [ForoController::class, 'show']);
+});
+
+// Publicar hilo — solo estudiantes
+Route::middleware('rol:ESTUDIANTE')->group(function () {
+    Route::post('/foro',                      [ForoController::class, 'store']);
+    Route::put('/foro/{id}',                  [ForoController::class, 'update']);
+    Route::patch('/foro/{id}/solucion',       [ForoController::class, 'marcarSolucion']);
+});
+
+// Responder — tutores, revisores y admin
+Route::middleware('rol:TUTOR,REVISOR,ADMIN,ESTUDIANTE')->group(function () {
+    Route::post('/foro/{id}/responder',                    [ForoController::class, 'responder']);
+    Route::delete('/foro/respuestas/{respuestaId}',        [ForoController::class, 'eliminarRespuesta']);
+});
+
+// Moderación — revisores y admin
+Route::middleware('rol:REVISOR,ADMIN')->group(function () {
+    Route::patch('/foro/{id}/estado', [ForoController::class, 'cambiarEstado']);
+});
 
     // ── MODULO 5: RECURSOS EDUCATIVOS ─────────────────────────────────────────────
 

@@ -35,17 +35,35 @@ import RevisionRecursosPage from './pages/revisor/RevisionRecursosPage';
 import EstadisticasPage from './pages/estudiante/EstadisticasPage';
 import EstadisticasTutorPage from './pages/tutor/EstadisticasTutorPage';
 import EstadisticasAdminPage from './pages/admin/EstadisticasAdminPage';
-
+import { foroService } from './services/foroService';
+import ForoPage from './pages/foro/ForoPage';
+import HiloPage from './pages/foro/HiloPage';
 
 // ── Navbar ───────────────────────────────────────────────────────────────────
 function Navbar() {
   const { logout, usuario } = useAuth();
   const navigate = useNavigate();
+  const [badge, setBadge] = useState(0);
 
   const handleLogout = async () => {
     await logout();
     window.location.href = '/login';
   };
+
+  // Badge foro — solo estudiantes
+  useEffect(() => {
+    if (usuario?.rol?.codigo !== 'ESTUDIANTE') return;
+
+    const cargarBadge = () => {
+      foroService.badge()
+        .then(d => setBadge(d.total))
+        .catch(() => {});
+    };
+
+    cargarBadge();
+    const interval = setInterval(cargarBadge, 120_000);
+    return () => clearInterval(interval);
+  }, [usuario?.id]);
 
   const colores = {
     ADMIN: '#ef4444', TUTOR: '#6366f1',
@@ -53,6 +71,9 @@ function Navbar() {
   };
   const rol   = usuario?.rol?.codigo;
   const color = colores[rol] || '#6366f1';
+
+  // Rutas del foro visibles para todos los roles autenticados
+  const puedeVerForo = ['ESTUDIANTE', 'TUTOR', 'REVISOR', 'ADMIN'].includes(rol);
 
   return (
     <nav style={{
@@ -62,6 +83,8 @@ function Navbar() {
       background: 'rgba(255,255,255,0.03)',
       position: 'sticky', top: 0, zIndex: 100,
     }}>
+
+      {/* Logo */}
       <button onClick={() => navigate('/dashboard')} style={{
         display: 'flex', alignItems: 'center', gap: 12,
         background: 'none', border: 'none', cursor: 'pointer', padding: 0,
@@ -76,17 +99,59 @@ function Navbar() {
       </button>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-        <a href="/perfil" style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, textDecoration: 'none' }}
+
+        {/* Botón Foro con badge */}
+        {puedeVerForo && (
+          <button
+            onClick={() => navigate('/foro')}
+            style={{
+              position: 'relative',
+              background: 'none', border: 'none',
+              color: 'rgba(255,255,255,0.5)',
+              fontSize: 13, cursor: 'pointer',
+              padding: '4px 8px',
+              fontFamily: 'DM Sans, sans-serif',
+              transition: 'color 0.15s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = 'white'}
+            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
+          >
+            💬 Foro
+            {badge > 0 && (
+              <span style={{
+                position: 'absolute', top: -2, right: -4,
+                width: 16, height: 16, borderRadius: '50%',
+                background: '#ef4444', color: 'white',
+                fontSize: 9, fontWeight: 700,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                pointerEvents: 'none',
+              }}>
+                {badge > 9 ? '9+' : badge}
+              </span>
+            )}
+          </button>
+        )}
+
+        {/* Nombre */}
+        <a
+          href="/perfil"
+          style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, textDecoration: 'none' }}
           onMouseEnter={e => e.currentTarget.style.color = 'white'}
           onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
         >
           {usuario?.nombres} {usuario?.apellidos}
         </a>
+
+        {/* Badge rol */}
         <span style={{
           padding: '3px 10px', borderRadius: 20, fontSize: 11,
           fontWeight: 700, background: `${color}22`, color,
           textTransform: 'uppercase', letterSpacing: 1,
-        }}>{rol}</span>
+        }}>
+          {rol}
+        </span>
+
+        {/* Avatar */}
         <a href="/perfil" style={{
           width: 32, height: 32, borderRadius: '50%', overflow: 'hidden',
           border: `2px solid ${color}66`, display: 'flex', alignItems: 'center',
@@ -94,7 +159,8 @@ function Navbar() {
           flexShrink: 0,
         }}>
           {usuario?.foto_perfil_url ? (
-            <img src={usuario.foto_perfil_url} alt="Foto"
+            <img
+              src={usuario.foto_perfil_url} alt="Foto"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               onError={e => { e.target.style.display = 'none'; }}
             />
@@ -104,13 +170,17 @@ function Navbar() {
             </span>
           )}
         </a>
-        <button onClick={handleLogout} style={{
-          padding: '7px 16px',
-          background: 'rgba(239,68,68,0.12)',
-          border: '1px solid rgba(239,68,68,0.3)',
-          borderRadius: 9, color: '#f87171',
-          fontSize: 13, fontWeight: 600, cursor: 'pointer',
-        }}
+
+        {/* Cerrar sesión */}
+        <button
+          onClick={handleLogout}
+          style={{
+            padding: '7px 16px',
+            background: 'rgba(239,68,68,0.12)',
+            border: '1px solid rgba(239,68,68,0.3)',
+            borderRadius: 9, color: '#f87171',
+            fontSize: 13, fontWeight: 600, cursor: 'pointer',
+          }}
           onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.25)'}
           onMouseLeave={e => e.currentTarget.style.background = 'rgba(239,68,68,0.12)'}
         >
@@ -621,6 +691,21 @@ export default function App() {
   <ProtectedRoute roles={['ESTUDIANTE']}>
     <SimpleLayout titulo="Mis estadísticas">
       <EstadisticasPage />
+    </SimpleLayout>
+  </ProtectedRoute>
+}/>
+<Route path="/foro" element={
+  <ProtectedRoute roles={['ESTUDIANTE', 'TUTOR', 'REVISOR', 'ADMIN']}>
+    <SimpleLayout titulo="Foro de dudas">
+      <ForoPage />
+    </SimpleLayout>
+  </ProtectedRoute>
+}/>
+
+<Route path="/foro/:id" element={
+  <ProtectedRoute roles={['ESTUDIANTE', 'TUTOR', 'REVISOR', 'ADMIN']}>
+    <SimpleLayout titulo="Detalle del hilo" botonVolver="/foro">
+      <HiloPage />
     </SimpleLayout>
   </ProtectedRoute>
 }/>
